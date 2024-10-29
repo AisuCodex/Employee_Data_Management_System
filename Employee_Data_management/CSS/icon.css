@@ -1,0 +1,44 @@
+:root {
+  --darkest-shade: #2a3417;
+  --darker-shade: #3f4a22;
+  --base-color: #556b2f;
+  --lighter-tint: #758b4d;
+  --lightest-tint: #99b27a;
+  --extra-lightest-tint: #dbe4d0;
+}
+
+.thesis-icon {
+  color: blue;
+  background-color: whitesmoke;
+}
+
+.capstone-icon {
+  color: red;
+  background-color: whitesmoke;
+}
+/* .guidelines-icon {
+    color: rgb(171, 132, 80);
+  }
+ */
+.ai-img-container {
+  display: flex;
+  flex-direction: row;
+}
+.ai-logo {
+  width: 20px;
+  margin-right: 5px;
+}
+.ai {
+  width: 100%;
+}
+a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+i {
+  margin-right: 5px;
+}
+.ai-anchor {
+  margin-top: 3px;
+}

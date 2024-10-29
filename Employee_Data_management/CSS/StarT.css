@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Outfit', sans-serif;
+}
+
+.header-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: darkolivegreen;
+  padding: 20px;
+  opacity: 0.8;
+  width: 100vw;
+  height: 130px;
+  box-sizing: border-box;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.header-content h2 {
+  color: white;
+  text-align: center;
+  font-size: 25px;
+  margin: 0 20px;
+}
+
+.logo {
+  width: 110px;
+  height: auto;
+  margin: 0 10px;
+}
+
+.main-content {
+  display: flex;
+  justify-content: left;
+  margin-left: 40px;
+  align-items: center;
+  height: 70vh;
+  box-sizing: border-box;
+}
+
+.caption-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 50%;
+}
+
+.caption {
+  color: rgb(247, 250, 243);
+  font-size: 55px;
+  text-align: left;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Black shadow with some blur */
+}
+
+.start-container {
+  margin-top: 20px;
+  transition: 0.5s;
+  display: flex;
+  flex-wrap: nowrap;
+}
+.start-container:hover {
+  transform: scale(1.1);
+  transition: 0.5s;
+}
+
+.start_btn {
+  background-color: darkolivegreen;
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  padding: 20px 20px;
+  font-size: 1.3rem;
+  opacity: 1;
+}
+.start_btn:hover {
+  text-decoration: none;
+  opacity: 0.9;
+  color: white;
+  transition: 0.5s ease;
+}
+.caption b {
+  font-size: 3rem;
+  opacity: 0.9;
+  font-weight: 450;
+}
+@media screen and (max-width: 700px) {
+  .header-content h2 {
+    font-size: 20px;
+  }
+  .caption {
+    font-size: 40px;
+  }
+  .logo {
+    width: 100px;
+  }
+}
+@media screen and (max-width: 520px) {
+  .header-content h2 {
+    font-size: 20px;
+  }
+  /*   .caption{
+    font-size: 40px;
+  }*/
+  .logo {
+    width: 80px;
+  }
+  .header-content {
+    height: 100px;
+  }
+}
+@media screen and (max-width: 430px) {
+  .header-content h2 {
+    font-size: 13px;
+  }
+  .caption {
+    font-size: 30px;
+  }
+  .logo {
+    width: 80px;
+  }
+  .start_btn {
+    font-size: 13px;
+  }
+  .main-content {
+    margin-left: 20px;
+  }
+}

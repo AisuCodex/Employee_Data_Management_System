@@ -1,0 +1,307 @@
+:root {
+  --darkest-shade: #2a3417;
+  --darker-shade: #3f4a22;
+  --base-color: #556b2f;
+  --lighter-tint: #758b4d;
+  --lightest-tint: #99b27a;
+  --extra-lightest-tint: #dbe4d0;
+}
+
+/* Basic reset */
+body,
+h1,
+table,
+form {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body style */
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--extra-lightest-tint);
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Header style */
+h1 {
+  text-align: center;
+  color: rgb(65, 88, 19);
+  margin-bottom: 20px;
+  margin-top: 30px;
+}
+
+/* Search form style */
+form {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+input[type='text'] {
+  padding: 10px;
+  width: 60%;
+  max-width: 600px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--base-color);
+  color: var(--extra-lightest-tint);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+/* Table style */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table,
+th,
+td {
+  border: 1px solid rgb(58, 75, 30);
+}
+span {
+  display: none;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: var(--extra-lightest-tint);
+  color: var(--darkest-shade);
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+a {
+  color: darkolivegreen;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+mark {
+  border-radius: 10px;
+  padding: 0 5px 0 5px;
+}
+
+@media (max-width: 680px) {
+  th {
+    display: none;
+  }
+  tr {
+    display: flex;
+    flex-direction: column;
+  }
+  td {
+    text-align: center;
+  }
+  span {
+    display: block;
+    border-radius: 5px;
+    text-align: center;
+    color: black;
+    font-weight: 700;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    width: 200px;
+  }
+}
+.title-count {
+}
+p {
+  color: darkolivegreen;
+}
+.abstract-text {
+  color: black;
+}
+.count-display {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  background-color: var(--extra-lightest-tint); /* Light background color */
+  padding: 10px;
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Light shadow */
+  text-align: center; /* Center the text */
+  margin: 20px auto; /* Center on the page */
+  max-width: 300px; /* Adjust width to 80% of the page */
+}
+
+.count-text {
+  color: var(--darkest-shade); /* Dark text color */
+  font-size: 18px; /* Text size */
+  font-weight: 650;
+  line-height: 1.6; /* Line height for readability */
+}
+
+.count-text br {
+  margin-bottom: 10px; /* Add spacing after line breaks */
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 20px auto;
+}
+
+.pagination a {
+  margin: 10px 5px;
+  padding: 8px 16px;
+  text-decoration: none;
+  color: darkolivegreen;
+  background-color: WhiteSmoke;
+  border: 1px solid darkolivegreen;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.pagination .active {
+  background-color: darkolivegreen;
+  color: white;
+}
+
+.pagination a:hover {
+  opacity: 0.7;
+}
+
+.scrollToTopBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 24px;
+  z-index: 1000;
+  display: none;
+  opacity: 0.9;
+}
+.scrollToTopBtn:hover {
+  opacity: 0.8;
+}
+.show-abstract-btn {
+  background-color: var(--base-color);
+  color: var(--extra-lightest-tint);
+  font-weight: 550;
+}
+#show-all-btn,
+#show-less-btn {
+  font-weight: 600;
+}
+.Yes {
+  background-color: var(--base-color);
+  color: white;
+}
+.actions {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+.edit-btn {
+  display: inline-block; /* Make the anchor behave like a button */
+  padding: 10px 15px; /* Add padding for a better click area */
+  background-color: var(--base-color); /* Green background */
+  color: white; /* White text */
+  text-align: center; /* Center the text */
+  text-decoration: none; /* Remove underline */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s; /* Smooth transition for background color */
+  border: none; /* No border */
+}
+
+.edit-btn:hover {
+  opacity: 0.8;
+}
+
+.delete-btn {
+  display: inline-block; /* Make the anchor behave like a button */
+  padding: 10px 15px; /* Add padding for a better click area */
+  background-color: red; /* Red background */
+  color: white; /* White text */
+  text-align: center; /* Center the text */
+  text-decoration: none; /* Remove underline */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s; /* Smooth transition for background color */
+  border: none; /* No border */
+}
+
+.delete-btn:hover {
+  opacity: 0.8;
+}
+
+.create-btn-container {
+  margin-left: 10px;
+}
+.create-btn {
+  display: inline-block; /* Make the anchor behave like a button */
+  padding: 10px 15px; /* Add padding for a better click area */
+  background-color: var(--base-color); /* Green background */
+  color: white; /* White text */
+  text-align: center; /* Center the text */
+  text-decoration: none; /* Remove underline */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s; /* Smooth transition for background color */
+  border: none; /* No border */
+}
+
+.create-btn:hover {
+  opacity: 0.8;
+}
+
+.back-btn-container {
+  margin: 10px 10px;
+}
+.back-btn {
+  display: inline-block; /* Make the anchor behave like a button */
+  padding: 10px 15px; /* Add padding for a better click area */
+  background-color: var(--base-color); /* Red background */
+  color: white; /* White text */
+  text-align: center; /* Center the text */
+  text-decoration: none; /* Remove underline */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s; /* Smooth transition for background color */
+  border: none; /* No border */
+}
+
+.back-btn:hover {
+  opacity: 0.8;
+}
+
+@media screen and (max-width: 680px) {
+  .create-btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0;
+  }
+}
