@@ -45,7 +45,7 @@ if (isset($_GET['id'])) {
 
         if ($update_stmt->execute()) {
             echo "Employee updated successfully.";
-            header("Location: employeeData.php");
+            header("Location: ./index.php");
             exit;
         } else {
             echo "Error updating employee: " . $update_stmt->error; // Changed to $update_stmt for more specific error
@@ -56,7 +56,6 @@ if (isset($_GET['id'])) {
     exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -71,7 +70,7 @@ if (isset($_GET['id'])) {
     </div>
     <h1>Edit Employee</h1>
 
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) . '?id=' . $employee_id; ?>">
+    <form method="post" action="./edit.php?id=<?php echo $employee_id; ?>">
         <label for="fname">First Name:</label>
         <input type="text" name="fname" id="fname" value="<?php echo htmlspecialchars($employee['Fname'], ENT_QUOTES, 'UTF-8'); ?>" required>
 
