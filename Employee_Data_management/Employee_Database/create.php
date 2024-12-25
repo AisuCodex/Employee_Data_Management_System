@@ -11,8 +11,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $phone = $_POST['phone'];
 
-    $sql = "INSERT INTO employee_data (Fname, Lname, gender, date_birth, position, salary, email, phone) 
-            VALUES ('$Fname', '$Lname', '$gender', '$date_birth', '$position', '$salary', '$email', '$phone')";
+    // Check if table is empty to set first ID as 1
+    $check_empty = "SELECT COUNT(*) as count FROM employee_data";
+    $result = $conn->query($check_empty);
+    $row = $result->fetch_assoc();
+    $count = $row['count'];
+
+    if ($count == 0) {
+        $sql = "ALTER TABLE employee_data AUTO_INCREMENT = 1";
+        $conn->query($sql);
+    }
+
+    $sql = "INSERT INTO employee_data (id, Fname, Lname, gender, date_birth, position, salary, email, phone) 
+            VALUES (COALESCE((SELECT MAX(id) + 1 FROM employee_data e2), 1), '$Fname', '$Lname', '$gender', '$date_birth', '$position', '$salary', '$email', '$phone')";
     
     if ($conn->query($sql) === TRUE) {
         header("Location: index.php");
@@ -70,4 +81,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </form>
 </body>
 </html>
-
