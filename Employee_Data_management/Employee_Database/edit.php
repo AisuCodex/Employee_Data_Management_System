@@ -29,19 +29,20 @@ if (isset($_GET['id'])) {
         $lname = $_POST['lname'];
         $gender = $_POST['gender'];
         $date_birth = $_POST['date_birth'];
+        $Address = $_POST['Address'];
         $position = $_POST['position'];
         $salary = $_POST['salary'];
         $email = $_POST['email'];
         $phone = $_POST['phone'];
 
-        $update_sql = "UPDATE employee_data SET Fname = ?, Lname = ?, gender = ?, date_birth = ?, position = ?, salary = ?, email = ?, phone = ? WHERE id = ?";
+        $update_sql = "UPDATE employee_data SET Fname = ?, Lname = ?, gender = ?, date_birth = ?, Address = ?, position = ?, salary = ?, email = ?, phone = ? WHERE id = ?";
         $update_stmt = $conn->prepare($update_sql);
         
         if ($update_stmt === false) {
             die("Error preparing the update statement: " . $conn->error);
         }
 
-        $update_stmt->bind_param("ssssssssi", $fname, $lname, $gender, $date_birth, $position, $salary, $email, $phone, $employee_id);
+        $update_stmt->bind_param("sssssssssi", $fname, $lname, $gender, $date_birth, $Address, $position, $salary, $email, $phone, $employee_id);
 
         if ($update_stmt->execute()) {
             echo "Employee updated successfully.";
@@ -82,6 +83,9 @@ if (isset($_GET['id'])) {
 
         <label for="date_birth">Date of Birth:</label>
         <input type="date" name="date_birth" id="date_birth" value="<?php echo htmlspecialchars($employee['date_birth'], ENT_QUOTES, 'UTF-8'); ?>" required>
+
+        <label for="Address">Address:</label>
+        <input type="text" name="Address" id="Address" value="<?php echo htmlspecialchars($employee['Address'], ENT_QUOTES, 'UTF-8'); ?>" required>
 
         <label for="position">Position:</label>
         <input type="text" name="position" id="position" value="<?php echo htmlspecialchars($employee['position'], ENT_QUOTES, 'UTF-8'); ?>" required>

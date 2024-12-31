@@ -18,7 +18,7 @@ function highlightSearchTerm($text, $searchTerm) {
 }
 
 // SQL query setup
-$sql = "SELECT id, Fname, Lname, gender, date_birth, position, salary, email, phone FROM employee_data";
+$sql = "SELECT id, Fname, Lname, gender, date_birth, Address, position, salary, email, phone FROM employee_data";
 if ($search !== '') {
     $search = $conn->real_escape_string($search);
     $sql .= " WHERE Fname LIKE '%$search%' OR Lname LIKE '%$search%' OR position LIKE '%$search%' OR gender LIKE '%$search%' OR email LIKE '%$search%' OR phone LIKE '%$search%'";
@@ -58,6 +58,7 @@ $result = $conn->query($sql);
             <th>Last Name</th>
             <th>Gender</th>
             <th>Date of Birth</th>
+            <th>Address</th>
             <th>Position</th>
             <th>Salary</th>
             <th>Email</th>
@@ -71,6 +72,7 @@ $result = $conn->query($sql);
             <td><?php echo highlightSearchTerm($row['Lname'], $search); ?></td>
             <td><?php echo htmlspecialchars($row['gender'], ENT_QUOTES, 'UTF-8'); ?></td>
             <td><?php echo htmlspecialchars($row['date_birth'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?php echo htmlspecialchars($row['Address'], ENT_QUOTES, 'UTF-8'); ?></td>
             <td><?php echo highlightSearchTerm($row['position'], $search); ?></td>
             <td><?php echo htmlspecialchars($row['salary'], ENT_QUOTES, 'UTF-8'); ?></td>
             <td><?php echo highlightSearchTerm($row['email'], $search); ?></td>

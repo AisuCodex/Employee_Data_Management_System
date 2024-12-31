@@ -6,6 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Lname = $_POST['Lname'];
     $gender = $_POST['gender'];
     $date_birth = $_POST['date_birth'];
+    $Address = $_POST['Address'];
     $position = $_POST['position'];
     $salary = $_POST['salary'];
     $email = $_POST['email'];
@@ -22,8 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->query($sql);
     }
 
-    $sql = "INSERT INTO employee_data (id, Fname, Lname, gender, date_birth, position, salary, email, phone) 
-            VALUES (COALESCE((SELECT MAX(id) + 1 FROM employee_data e2), 1), '$Fname', '$Lname', '$gender', '$date_birth', '$position', '$salary', '$email', '$phone')";
+    $sql = "INSERT INTO employee_data (id, Fname, Lname, gender, date_birth, Address, position, salary, email, phone) 
+            VALUES (COALESCE((SELECT MAX(id) + 1 FROM employee_data e2), 1), '$Fname', '$Lname', '$gender', '$date_birth', '$Address', '$position', '$salary', '$email', '$phone')";
     
     if ($conn->query($sql) === TRUE) {
         header("Location: index.php");
@@ -64,6 +65,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <label for="date_birth">Date of Birth:</label>
         <input type="date" id="date_birth" name="date_birth" required><br>
+
+        <label for="Address">Address:</label>
+        <input type="text" id="Address" name="Address" required><br>
 
         <label for="position">Position:</label>
         <input type="text" id="position" name="position" required><br>
