@@ -68,7 +68,15 @@ include 'adminAuth.php';
               </div>
           </a>
       </section>
-  
+
+      <section id="capstone">
+      <a class="box-link" onclick="showLoadingScreen()" href="announcements.php">
+              <div class="box">
+                  <h2>Announcements</h2>
+                  <p>Create and manage <br> Announcements here.</p>
+              </div>
+          </a>
+      </section>
 
   <!-- Logout Confirmation Modal -->
   <div id="logout-modal" class="modal">

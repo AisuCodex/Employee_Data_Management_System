@@ -49,7 +49,6 @@ $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,7 +106,6 @@ $stmt->close();
                 <?php if ($success_message): ?>
                     <div class="success-message"><?php echo htmlspecialchars($success_message); ?></div>
                 <?php endif; ?>
-
                 <?php if ($error_message): ?>
                     <div class="error-message"><?php echo htmlspecialchars($error_message); ?></div>
                 <?php endif; ?>
@@ -134,6 +132,13 @@ $stmt->close();
                     <?php endif; ?>
                 </div>
             </section>
+            
+            <div class="card">
+                <i class="fas fa-bullhorn"></i>
+                <h3>Announcements</h3>
+                <p>View company announcements</p>
+                <a href="viewAnnouncements.php" class="view-btn" onclick="showLoadingScreen()">View</a>
+            </div>
         </main>
     </div>
 

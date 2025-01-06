@@ -173,6 +173,16 @@ textarea {
     color: #721c24;
 }
 
+.card{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    border-left: 4px solid var(--base-color);
+}
+
 @media (max-width: 768px) {
     main {
         grid-template-columns: 1fr;

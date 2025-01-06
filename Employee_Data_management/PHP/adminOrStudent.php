@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>admin_or_student</title>
+  <title>admin_or_Employee</title>
   <link rel="stylesheet" type="text/css" href="../CSS/admin_or_student.css">
   <link rel="stylesheet" type="text/css" href="../CSS/Loading_screen.css"> <!-- Link to the loading screen CSS -->
 </head>
