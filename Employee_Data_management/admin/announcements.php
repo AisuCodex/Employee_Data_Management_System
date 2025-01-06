@@ -1,10 +1,18 @@
 <?php
-include 'adminAuth.php';
-include '../database/adminAcc_database.php';
+session_start();
+require_once('../database/adminAcc_database.php');
 
 // Create announcements table if it doesn't exist
-$create_table_sql = file_get_contents("../database/create_announcements.sql");
-$conn->query($create_table_sql);
+$create_table_query = "CREATE TABLE IF NOT EXISTS announcements (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(100) NOT NULL,
+    message TEXT NOT NULL,
+    posted_by VARCHAR(100) NOT NULL,
+    date_posted TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    importance ENUM('normal', 'important', 'urgent') DEFAULT 'normal',
+    FOREIGN KEY (posted_by) REFERENCES admin_acc(email)
+)";
+$conn->query($create_table_query);
 
 // Handle form submission for new announcement
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -52,6 +60,7 @@ $result = $conn->query("SELECT * FROM announcements ORDER BY date_posted DESC");
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
         .announcement-form {
+            padding: 20px;
             background-color: white;
             padding: 20px;
             border-radius: 10px;
