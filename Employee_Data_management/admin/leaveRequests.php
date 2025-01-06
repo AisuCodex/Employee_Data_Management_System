@@ -22,10 +22,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && isset($_P
 }
 
 // Fetch all leave requests
-$sql = "SELECT lr.*, ea.email FROM leave_requests lr 
-        JOIN employee_acc ea ON lr.email = ea.email 
-        ORDER BY lr.created_at DESC";
+$sql = "SELECT * FROM leave_requests ORDER BY created_at DESC";
 $result = $conn->query($sql);
+
+// Check if table exists
+if ($result === false) {
+    // Table doesn't exist, create it
+    $create_table_sql = file_get_contents("../database/create_leave_table.sql");
+    if ($conn->multi_query($create_table_sql)) {
+        do {
+            // Clear out the results
+            if ($result = $conn->store_result()) {
+                $result->free();
+            }
+        } while ($conn->more_results() && $conn->next_result());
+        
+        // Now fetch the requests again
+        $sql = "SELECT * FROM leave_requests ORDER BY created_at DESC";
+        $result = $conn->query($sql);
+    }
+}
 ?>
 
 <!DOCTYPE html>

@@ -5,25 +5,49 @@ include("../database/adminAcc_database.php");
 // Handle leave message submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_leave'])) {
     $email = $_SESSION['email'];
-    $leave_type = $_POST['leave_type'];
-    $start_date = $_POST['start_date'];
-    $end_date = $_POST['end_date'];
-    $reason = $_POST['reason'];
+    $leave_type = mysqli_real_escape_string($conn, $_POST['leave_type']);
+    $start_date = mysqli_real_escape_string($conn, $_POST['start_date']);
+    $end_date = mysqli_real_escape_string($conn, $_POST['end_date']);
+    $reason = mysqli_real_escape_string($conn, $_POST['reason']);
     
-    $sql = "INSERT INTO leave_requests (email, leave_type, start_date, end_date, reason, status) 
-            VALUES ('$email', '$leave_type', '$start_date', '$end_date', '$reason', 'pending')";
+    $sql = "INSERT INTO leave_requests (email, leave_type, start_date, end_date, reason) 
+            VALUES (?, ?, ?, ?, ?)";
+            
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssss", $email, $leave_type, $start_date, $end_date, $reason);
     
-    if ($conn->query($sql) === TRUE) {
-        $success_message = "Leave request submitted successfully!";
+    if ($stmt->execute()) {
+        $_SESSION['success_message'] = "Leave request submitted successfully!";
     } else {
-        $error_message = "Error: " . $conn->error;
+        $_SESSION['error_message'] = "Error: " . $conn->error;
     }
+    $stmt->close();
+    
+    // Redirect to prevent form resubmission
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+
+// Get messages from session
+$success_message = '';
+$error_message = '';
+if (isset($_SESSION['success_message'])) {
+    $success_message = $_SESSION['success_message'];
+    unset($_SESSION['success_message']);
+}
+if (isset($_SESSION['error_message'])) {
+    $error_message = $_SESSION['error_message'];
+    unset($_SESSION['error_message']);
 }
 
 // Get user's leave history
 $email = $_SESSION['email'];
-$sql = "SELECT * FROM leave_requests WHERE email = '$email' ORDER BY created_at DESC";
-$result = $conn->query($sql);
+$sql = "SELECT * FROM leave_requests WHERE email = ? ORDER BY created_at DESC";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+$stmt->close();
 ?>
 
 <!DOCTYPE html>
@@ -51,7 +75,7 @@ $result = $conn->query($sql);
         <main>
             <section class="leave-request-form">
                 <h2>Submit Leave Request</h2>
-                <form method="POST" action="">
+                <form method="POST" action="" onsubmit="showLoadingScreen()">
                     <div class="form-group">
                         <label for="leave_type">Leave Type:</label>
                         <select name="leave_type" id="leave_type" required>
@@ -80,19 +104,19 @@ $result = $conn->query($sql);
                     <button type="submit" name="submit_leave" class="submit-btn">Submit Leave Request</button>
                 </form>
 
-                <?php if (isset($success_message)): ?>
-                    <div class="success-message"><?php echo $success_message; ?></div>
+                <?php if ($success_message): ?>
+                    <div class="success-message"><?php echo htmlspecialchars($success_message); ?></div>
                 <?php endif; ?>
 
-                <?php if (isset($error_message)): ?>
-                    <div class="error-message"><?php echo $error_message; ?></div>
+                <?php if ($error_message): ?>
+                    <div class="error-message"><?php echo htmlspecialchars($error_message); ?></div>
                 <?php endif; ?>
             </section>
 
             <section class="leave-history">
                 <h2>Leave History</h2>
                 <div class="leave-list">
-                    <?php if ($result->num_rows > 0): ?>
+                    <?php if ($result && $result->num_rows > 0): ?>
                         <?php while($row = $result->fetch_assoc()): ?>
                             <div class="leave-item">
                                 <div class="leave-type"><?php echo ucfirst($row['leave_type']); ?> Leave</div>
@@ -126,8 +150,7 @@ $result = $conn->query($sql);
 
     <script>
         function showLoadingScreen() {
-            var loadingScreen = document.getElementById('loading-screen');
-            loadingScreen.style.display = 'flex';
+            document.getElementById('loading-screen').style.display = 'flex';
         }
 
         // Get the modal and buttons
