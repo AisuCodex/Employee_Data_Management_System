@@ -25,7 +25,7 @@
         <div class="caption-container">
             <h1 class="caption">Welcome to <br> Employee Data <br>Management System</h1>
             <div class="start-container">
-              <a class="start_btn" href="../PHP/adminLogin.php" onclick="showLoadingScreen()">Get Started</a>
+              <a class="start_btn" href="adminOrStudent.php" onclick="showLoadingScreen()">Get Started</a>
             </div>
         </div>
     </main> 

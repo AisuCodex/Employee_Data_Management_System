@@ -1,10 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: 'Outfit', sans-serif;
 }
+
 :root {
   --darkest-shade: #2a3417;
   --darker-shade: #3f4a22;
@@ -15,7 +17,7 @@
 }
 
 body {
-  background-color: var(--darker-shade);
+  background-color: var(--darkest-shade);
   background-size: cover;
   background-repeat: no-repeat;
   display: flex;
@@ -92,51 +94,35 @@ h2 {
   animation: input-appear 0.6s ease-out backwards;
 }
 
-.inputBox:nth-child(2) {
-  animation-delay: 0.1s;
-}
-.inputBox:nth-child(3) {
-  animation-delay: 0.2s;
-}
-
-@keyframes input-appear {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 .inputBox input {
   width: 100%;
-  padding: 15px;
-  border: none;
+  padding: 10px; /* Unified padding */
+  font-size: 16px; /* Unified font size */
+  border: 1px solid #ccc; /* Added border */
+  border-radius: 4px; /* Rounded corners */
   outline: none;
   background: transparent;
   color: var(--darkest-shade);
-  font-size: 1em;
-  border-bottom: 2px solid var(--darker-shade);
   transition: all 0.3s ease;
 }
 
 .inputBox span {
   position: absolute;
-  left: 0;
-  padding: 15px;
+  top: 50%;
+  left: 10px; /* Unified alignment */
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #aaa; /* Lighter text color */
+  transition: all 0.3s ease;
   pointer-events: none;
-  font-size: 1em;
-  color: var(--darker-shade);
-  transition: 0.3s ease;
 }
 
-.inputBox input:valid ~ span,
-.inputBox input:focus ~ span {
-  transform: translateY(-20px);
-  font-size: 0.8em;
-  color: var(--base-color);
+.inputBox span.active,
+.inputBox input:focus ~ span,
+.inputBox input:valid ~ span {
+  top: -10px; /* Float label above input */
+  font-size: 12px; /* Smaller active font */
+  color: #333; /* Darker active color */
 }
 
 .inputBox i {
@@ -157,13 +143,13 @@ h2 {
 
 .toggle-password {
   position: absolute;
-  right: 10px;
   top: 50%;
+  right: 10px; /* Positioned near input */
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.2em;
+  font-size: 16px;
   color: var(--darker-shade);
   transition: all 0.3s ease;
 }
@@ -213,6 +199,16 @@ h2 {
   text-decoration: none;
   font-size: 0.9em;
   transition: all 0.3s ease;
+}
+
+.forgot {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 20px;
 }
 
 .already:hover {
