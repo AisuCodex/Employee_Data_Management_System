@@ -50,7 +50,7 @@
     </main> 
 
     <footer class="footer">
-        <p style="margin: 0;">System of  <span class="creator-name">Fatima Palisoc</span></p>
+        <p style="margin: 0;">System created by  <span class="creator-name">Fatima Palisoc</span></p>
     </footer>
 
     <script src="../JavaScripts/loadingScreen.js"></script>

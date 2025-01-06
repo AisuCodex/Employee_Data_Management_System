@@ -2,7 +2,8 @@
 // Include the database connection
 include("../database/adminAcc_database.php");
 
-// Start user session
+// Start employee session with unique name
+session_name('employee_session');
 session_start();
 
 // Check if form is submitted
