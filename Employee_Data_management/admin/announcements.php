@@ -177,6 +177,37 @@ $result = $conn->query("SELECT * FROM announcements ORDER BY date_posted DESC");
             border-radius: 5px;
             margin-bottom: 20px;
         }
+
+        /* Search bar styling */
+        .search-container {
+            margin: 20px auto;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid var(--base-color);
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .search-bar:focus {
+            border-color: var(--darker-shade);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Highlight styling */
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -204,6 +235,7 @@ $result = $conn->query("SELECT * FROM announcements ORDER BY date_posted DESC");
                 <div class="error-message"><?php echo $error_message; ?></div>
             <?php endif; ?>
 
+
             <div class="announcement-form">
                 <h2>Create New Announcement</h2>
                 <form method="POST" onsubmit="showLoadingScreen()">
@@ -227,15 +259,18 @@ $result = $conn->query("SELECT * FROM announcements ORDER BY date_posted DESC");
                     <button type="submit" class="view-btn">Post Announcement</button>
                 </form>
             </div>
+            <div class="search-container">
+                <input type="text" id="searchBar" class="search-bar" placeholder="Search announcements..." onkeyup="searchAnnouncements()">
+            </div>
 
             <div class="requests-container">
                 <?php if ($result && $result->num_rows > 0): ?>
                     <?php while($row = $result->fetch_assoc()): ?>
-                        <div class="announcement-card">
+                        <div class="announcement-card" data-searchable>
                             <div class="announcement-header">
-                                <span class="announcement-title"><?php echo htmlspecialchars($row['title']); ?></span>
+                                <span class="announcement-title searchable"><?php echo htmlspecialchars($row['title']); ?></span>
                                 <div>
-                                    <span class="importance-badge importance-<?php echo $row['importance']; ?>">
+                                    <span class="importance-badge importance-<?php echo $row['importance']; ?> searchable">
                                         <?php echo ucfirst($row['importance']); ?>
                                     </span>
                                     <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this announcement?');">
@@ -247,13 +282,13 @@ $result = $conn->query("SELECT * FROM announcements ORDER BY date_posted DESC");
                                     </form>
                                 </div>
                             </div>
-                            <div class="announcement-content">
+                            <div class="announcement-content searchable">
                                 <?php echo nl2br(htmlspecialchars($row['message'])); ?>
                             </div>
                             <div class="announcement-meta">
-                                <i class="fas fa-user"></i> Posted by: <?php echo htmlspecialchars($row['posted_by']); ?>
+                                <i class="fas fa-user"></i> Posted by: <span class="searchable"><?php echo htmlspecialchars($row['posted_by']); ?></span>
                                 <br>
-                                <i class="fas fa-clock"></i> Posted on: <?php echo date('F d, Y h:i A', strtotime($row['date_posted'])); ?>
+                                <i class="fas fa-clock"></i> Posted on: <span class="searchable"><?php echo date('F d, Y h:i A', strtotime($row['date_posted'])); ?></span>
                             </div>
                         </div>
                     <?php endwhile; ?>
@@ -269,6 +304,41 @@ $result = $conn->query("SELECT * FROM announcements ORDER BY date_posted DESC");
     <script>
         function showLoadingScreen() {
             document.getElementById('loading-screen').style.display = 'flex';
+        }
+
+        function searchAnnouncements() {
+            const searchText = document.getElementById('searchBar').value.toLowerCase();
+            const announcementCards = document.querySelectorAll('.announcement-card[data-searchable]');
+            
+            announcementCards.forEach(card => {
+                const searchableElements = card.getElementsByClassName('searchable');
+                let found = false;
+
+                // Remove existing highlights
+                Array.from(searchableElements).forEach(element => {
+                    element.innerHTML = element.textContent;
+                });
+
+                if (searchText) {
+                    // Check if any element contains the search text
+                    Array.from(searchableElements).forEach(element => {
+                        const text = element.textContent.toLowerCase();
+                        if (text.includes(searchText)) {
+                            found = true;
+                            // Add highlight
+                            element.innerHTML = element.textContent.replace(
+                                new RegExp(`(${searchText})`, 'gi'),
+                                '<span class="highlight">$1</span>'
+                            );
+                        }
+                    });
+                } else {
+                    found = true;
+                }
+
+                // Show/hide card based on search match
+                card.style.display = found ? '' : 'none';
+            });
         }
     </script>
 </body>

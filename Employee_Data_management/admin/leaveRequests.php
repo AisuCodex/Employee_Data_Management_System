@@ -53,6 +53,38 @@ if ($result === false) {
     <link rel="stylesheet" href="../CSS/leaveRequests.css">
     <link rel="stylesheet" type="text/css" href="../CSS/Loading_screen.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        /* Search bar styling */
+        .search-container {
+            margin: 20px auto;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid var(--base-color);
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .search-bar:focus {
+            border-color: var(--darker-shade);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Highlight styling */
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <!-- Loading screen -->
@@ -71,6 +103,10 @@ if ($result === false) {
         </header>
 
         <main>
+            <div class="search-container">
+                <input type="text" id="searchBar" class="search-bar" placeholder="Search leave requests..." onkeyup="searchRequests()">
+            </div>
+
             <?php if (isset($success_message)): ?>
                 <div class="alert success">
                     <?php echo $success_message; ?>
@@ -86,19 +122,19 @@ if ($result === false) {
             <div class="requests-container">
                 <?php if ($result->num_rows > 0): ?>
                     <?php while($row = $result->fetch_assoc()): ?>
-                        <div class="request-card <?php echo $row['status']; ?>">
+                        <div class="request-card <?php echo $row['status']; ?>" data-searchable>
                             <div class="request-header">
-                                <span class="employee-email"><?php echo htmlspecialchars($row['email']); ?></span>
-                                <span class="status-badge <?php echo $row['status']; ?>">
+                                <span class="employee-email searchable"><?php echo htmlspecialchars($row['email']); ?></span>
+                                <span class="status-badge <?php echo $row['status']; ?> searchable">
                                     <?php echo ucfirst($row['status']); ?>
                                 </span>
                             </div>
                             <div class="request-details">
-                                <p><strong>Leave Type:</strong> <?php echo ucfirst($row['leave_type']); ?></p>
-                                <p><strong>From:</strong> <?php echo $row['start_date']; ?></p>
-                                <p><strong>To:</strong> <?php echo $row['end_date']; ?></p>
-                                <p><strong>Reason:</strong> <?php echo htmlspecialchars($row['reason']); ?></p>
-                                <p><strong>Submitted:</strong> <?php echo date('M d, Y H:i', strtotime($row['created_at'])); ?></p>
+                                <p><strong>Leave Type:</strong> <span class="searchable"><?php echo ucfirst($row['leave_type']); ?></span></p>
+                                <p><strong>From:</strong> <span class="searchable"><?php echo $row['start_date']; ?></span></p>
+                                <p><strong>To:</strong> <span class="searchable"><?php echo $row['end_date']; ?></span></p>
+                                <p><strong>Reason:</strong> <span class="searchable"><?php echo htmlspecialchars($row['reason']); ?></span></p>
+                                <p><strong>Submitted:</strong> <span class="searchable"><?php echo date('M d, Y H:i', strtotime($row['created_at'])); ?></span></p>
                             </div>
                             <?php if ($row['status'] === 'pending'): ?>
                                 <div class="request-actions">
@@ -128,6 +164,41 @@ if ($result === false) {
     <script>
         function showLoadingScreen() {
             document.getElementById('loading-screen').style.display = 'flex';
+        }
+
+        function searchRequests() {
+            const searchText = document.getElementById('searchBar').value.toLowerCase();
+            const requestCards = document.querySelectorAll('.request-card[data-searchable]');
+            
+            requestCards.forEach(card => {
+                const searchableElements = card.getElementsByClassName('searchable');
+                let found = false;
+
+                // Remove existing highlights
+                Array.from(searchableElements).forEach(element => {
+                    element.innerHTML = element.textContent;
+                });
+
+                if (searchText) {
+                    // Check if any element contains the search text
+                    Array.from(searchableElements).forEach(element => {
+                        const text = element.textContent.toLowerCase();
+                        if (text.includes(searchText)) {
+                            found = true;
+                            // Add highlight
+                            element.innerHTML = element.textContent.replace(
+                                new RegExp(`(${searchText})`, 'gi'),
+                                '<span class="highlight">$1</span>'
+                            );
+                        }
+                    });
+                } else {
+                    found = true;
+                }
+
+                // Show/hide card based on search match
+                card.style.display = found ? '' : 'none';
+            });
         }
     </script>
 </body>

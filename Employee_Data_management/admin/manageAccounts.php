@@ -105,6 +105,35 @@ if (!$result) {
             color: var(--darker-shade);
             font-size: 1.2em;
         }
+
+        /* Search bar styling */
+        .search-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .search-bar {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            border: 2px solid var(--base-color);
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus {
+            border-color: var(--darker-shade);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Highlight styling */
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px;
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
@@ -124,6 +153,10 @@ if (!$result) {
         </header>
 
         <main>
+            <div class="search-container">
+                <input type="text" class="search-bar" id="searchBar" placeholder="Search accounts..." onkeyup="searchAccounts()">
+            </div>
+
             <?php if (isset($success_message)): ?>
                 <div class="alert success">
                     <?php echo $success_message; ?>
@@ -176,6 +209,30 @@ if (!$result) {
             }
             event.preventDefault();
             return false;
+        }
+
+        function searchAccounts() {
+            const searchText = document.getElementById('searchBar').value.toLowerCase();
+            const accountCards = document.querySelectorAll('.account-card');
+            
+            accountCards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                const shouldShow = cardText.includes(searchText);
+                card.style.display = shouldShow ? '' : 'none';
+                
+                if (shouldShow && searchText) {
+                    // Remove existing highlights
+                    card.innerHTML = card.innerHTML.replace(/<mark class="highlight">(.*?)<\/mark>/g, '$1');
+                    
+                    // Add new highlights
+                    const regex = new RegExp(searchText, 'gi');
+                    const elements = card.getElementsByClassName('account-id');
+                    elements[0].innerHTML = elements[0].textContent.replace(regex, match => `<mark class="highlight">${match}</mark>`);
+                    
+                    const emailElements = card.getElementsByClassName('account-email');
+                    emailElements[0].innerHTML = emailElements[0].innerHTML.replace(regex, match => `<mark class="highlight">${match}</mark>`);
+                }
+            });
         }
     </script>
 </body>
