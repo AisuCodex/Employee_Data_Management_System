@@ -56,7 +56,7 @@ mysqli_close($conn);
 <div class="secondContainer">
     <div class="child">
       <div class="backBtn-div">
-        <a class="backBtn" href="adminOrStudent.php" onclick="showLoadingScreen()">X</a>
+        <a class="backBtn" href="adminOrEmployee.php" onclick="showLoadingScreen()">X</a>
       </div>
       <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" onsubmit="showLoadingScreen()">
         <h2>Employee Login</h2>

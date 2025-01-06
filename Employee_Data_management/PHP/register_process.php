@@ -47,7 +47,7 @@ mysqli_close($conn);
   <div class="secondContainer">
     <div class="child">
       <div class="backBtn-div">
-        <a class="backBtn" href="adminOrStudent.php" onclick="showLoadingScreen()">X</a>
+        <a class="backBtn" href="adminOrEmployee.php" onclick="showLoadingScreen()">X</a>
       </div>
       
       <!-- Registration form only displays if there is no success message -->

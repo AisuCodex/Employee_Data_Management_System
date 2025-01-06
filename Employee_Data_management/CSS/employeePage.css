@@ -182,6 +182,22 @@ textarea {
     border-radius: 5px;
     border-left: 4px solid var(--base-color);
 }
+.footer {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(42, 52, 23, 0.9); 
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 0.9em;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.creator-name {
+    color: #99b27a; 
+    font-weight: 600;
+}
 
 @media (max-width: 768px) {
     main {

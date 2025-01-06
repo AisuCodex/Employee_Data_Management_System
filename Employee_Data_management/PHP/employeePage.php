@@ -153,6 +153,10 @@ $stmt->close();
         </div>
     </div>
 
+    <footer class="footer">
+        <p style="margin: 0;">System created by  <span class="creator-name">Fatima Palisoc</span></p>
+    </footer>
+
     <script>
         function showLoadingScreen() {
             document.getElementById('loading-screen').style.display = 'flex';

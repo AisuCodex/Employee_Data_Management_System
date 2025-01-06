@@ -134,6 +134,20 @@ if (!$result) {
             padding: 2px;
             border-radius: 3px;
         }
+        .footer {
+            width: 100%;
+            background-color: rgba(42, 52, 23, 0.9); 
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 0.9em;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .creator-name {
+            color: #99b27a; 
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -196,6 +210,10 @@ if (!$result) {
             </div>
         </main>
     </div>
+
+    <footer class="footer">
+        <p style="margin: 0;">System created by  <span class="creator-name">Fatima Palisoc</span></p>
+    </footer>
 
     <script>
         function showLoadingScreen() {
