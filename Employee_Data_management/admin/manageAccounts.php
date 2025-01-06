@@ -108,20 +108,19 @@ if (!$result) {
 
         /* Search bar styling */
         .search-container {
-            margin: 20px auto;
             text-align: center;
-            max-width: 600px;
+            margin: 20px 0;
         }
 
         .search-bar {
             width: 100%;
+            max-width: 500px;
             padding: 12px 20px;
             border: 2px solid var(--base-color);
             border-radius: 25px;
             font-size: 16px;
             outline: none;
             transition: all 0.3s ease;
-            margin-bottom: 20px;
         }
 
         .search-bar:focus {
@@ -134,36 +133,6 @@ if (!$result) {
             background-color: #fff3cd;
             padding: 2px;
             border-radius: 3px;
-        }
-
-        /* Footer styling */
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            margin: 0;
-        }
-
-        .container {
-            flex: 1;
-        }
-
-        .footer {
-            position: sticky;
-            bottom: 0;
-            width: 100%;
-            background-color: rgba(42, 52, 23, 0.9); 
-            color: white;
-            text-align: center;
-            padding: 15px 0;
-            font-size: 0.9em;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: auto;
-        }
-
-        .creator-name {
-            color: #99b27a; 
-            font-weight: 600;
         }
     </style>
 </head>
@@ -179,25 +148,21 @@ if (!$result) {
                 <a href="adminPage.php" class="back-btn" onclick="showLoadingScreen()">
                     <i class="fas fa-arrow-left"></i> Back
                 </a>
-                <h1>Employee Accounts Management</h1>
+                <h1>Manage Employee Accounts</h1>
             </div>
         </header>
 
         <main>
             <div class="search-container">
-                <input type="text" class="search-bar" id="searchBar" placeholder="Search accounts..." onkeyup="searchAccounts()">
+                <input type="text" id="searchBar" class="search-bar" placeholder="Search by ID or email..." onkeyup="searchAccounts()">
             </div>
 
             <?php if (isset($success_message)): ?>
-                <div class="alert success">
-                    <?php echo $success_message; ?>
-                </div>
+                <div class="success-message"><?php echo $success_message; ?></div>
             <?php endif; ?>
 
             <?php if (isset($error_message)): ?>
-                <div class="alert error">
-                    <?php echo $error_message; ?>
-                </div>
+                <div class="error-message"><?php echo $error_message; ?></div>
             <?php endif; ?>
 
             <div class="requests-container">
@@ -227,10 +192,6 @@ if (!$result) {
             </div>
         </main>
     </div>
-
-    <footer class="footer">
-        <p style="margin: 0;">System created by  <span class="creator-name">Fatima Palisoc</span></p>
-    </footer>
 
     <script>
         function showLoadingScreen() {
