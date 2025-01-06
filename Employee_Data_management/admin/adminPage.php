@@ -51,7 +51,14 @@ include 'adminAuth.php';
           </a>
       </section>
 
-
+      <section id="capstone">
+      <a class="box-link" onclick="showLoadingScreen()" href="leaveRequests.php">
+              <div class="box">
+                  <h2>Employee's Leave Request</h2>
+                  <p>Manage and view <br> Employee'sLeave Request.</p>
+              </div>
+          </a>
+      </section>
 
   
 

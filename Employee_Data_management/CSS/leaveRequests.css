@@ -1,0 +1,239 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+:root {
+    --darkest-shade: #2a3417;
+    --darker-shade: #3f4a22;
+    --base-color: #556b2f;
+    --lighter-tint: #708238;
+    --lightest-tint: #99b27a;
+    --extra-lightest-tint: #dbe4d0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+    background-color: var(--extra-lightest-tint);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.back-btn {
+    color: var(--darkest-shade);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 1.1em;
+    transition: color 0.3s ease;
+}
+
+.back-btn:hover {
+    color: var(--base-color);
+}
+
+h1 {
+    color: var(--darkest-shade);
+    font-size: 1.8em;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.requests-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.request-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.request-card:hover {
+    transform: translateY(-5px);
+}
+
+.request-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.employee-email {
+    font-weight: bold;
+    color: var(--darker-shade);
+}
+
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.status-badge.pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.approved {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-badge.rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.request-details {
+    margin-bottom: 15px;
+}
+
+.request-details p {
+    margin-bottom: 8px;
+    color: #666;
+}
+
+.request-details strong {
+    color: var(--darkest-shade);
+}
+
+.request-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn.approve {
+    background-color: var(--base-color);
+    color: white;
+}
+
+.btn.approve:hover {
+    background-color: var(--darker-shade);
+}
+
+.btn.deny {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn.deny:hover {
+    background-color: #c82333;
+}
+
+.no-requests {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 50px;
+    background-color: white;
+    border-radius: 10px;
+    color: #666;
+}
+
+.no-requests i {
+    font-size: 3em;
+    margin-bottom: 15px;
+    color: var(--base-color);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    h1 {
+        font-size: 1.5em;
+    }
+    
+    .requests-container {
+        grid-template-columns: 1fr;
+    }
+}

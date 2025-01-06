@@ -1,0 +1,286 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+:root {
+    --darkest-shade: #2a3417;
+    --darker-shade: #3f4a22;
+    --base-color: #556b2f;
+    --lighter-tint: #708238;
+    --lightest-tint: #99b27a;
+    --extra-lightest-tint: #dbe4d0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+    background-color: var(--extra-lightest-tint);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    margin-bottom: 30px;
+}
+
+h1 {
+    color: var(--darkest-shade);
+}
+
+.logout-btn {
+    padding: 10px 20px;
+    background-color: var(--base-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: var(--darker-shade);
+}
+
+main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.leave-request-form, .leave-history {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: var(--darker-shade);
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--darkest-shade);
+}
+
+input[type="date"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.submit-btn {
+    background-color: var(--base-color);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: var(--darker-shade);
+}
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.leave-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.leave-item {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    border-left: 4px solid var(--base-color);
+}
+
+.leave-type {
+    font-weight: bold;
+    color: var(--darker-shade);
+    margin-bottom: 5px;
+}
+
+.leave-dates {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.leave-status {
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.leave-status.pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.leave-status.approved {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.leave-status.rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+@media (max-width: 768px) {
+    main {
+        grid-template-columns: 1fr;
+    }
+    
+    .container {
+        padding: 10px;
+    }
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background-color: var(--extra-lightest-tint);
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal h2 {
+    color: var(--darkest-shade);
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.modal p {
+    color: var(--darker-shade);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--darker-shade);
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: var(--base-color);
+}
+
+.modal button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    margin: 0 10px;
+}
+
+#confirm-logout {
+    background-color: var(--base-color);
+    color: white;
+}
+
+#confirm-logout:hover {
+    background-color: var(--darker-shade);
+}
+
+.cancel {
+    background-color: #ddd;
+    color: var(--darkest-shade);
+}
+
+.cancel:hover {
+    background-color: #ccc;
+}
+
+.modal-content button {
+    display: inline-block;
+}

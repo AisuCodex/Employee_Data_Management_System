@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows > 0) {
         // Password is correct, set session variable
         $_SESSION['email'] = $email;
-        header("Location: ");
+        header("Location: employeePage.php");
         exit();
     } else {
         // Invalid email or password
@@ -41,7 +41,7 @@ mysqli_close($conn);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>employee Login</title>
   <link rel="stylesheet" href="../CSS/login.css">
   <link rel="stylesheet" type="text/css" href="../CSS/Loading_screen.css"> <!-- Link to the loading screen CSS -->
 </head>
@@ -58,7 +58,7 @@ mysqli_close($conn);
         <a class="backBtn" href="adminOrStudent.php" onclick="showLoadingScreen()">X</a>
       </div>
       <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" onsubmit="showLoadingScreen()">
-        <h2>Login</h2>
+        <h2>Employee Login</h2>
         <div class="inputBox">
           <input type="email" id="email" name="email" required value="<?php echo htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES); ?>">
           <span id="email-text">Email</span>
