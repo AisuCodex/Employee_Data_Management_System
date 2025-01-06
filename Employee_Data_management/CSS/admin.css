@@ -71,10 +71,11 @@ section {
 }
 .contain {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
   flex: 1;
-  gap: 3rem;
+  gap: 1.5rem;
   align-items: center;
 }
 

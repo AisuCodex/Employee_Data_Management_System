@@ -78,6 +78,8 @@ include 'adminAuth.php';
           </a>
       </section>
 
+
+
   <!-- Logout Confirmation Modal -->
   <div id="logout-modal" class="modal">
     <div class="modal-content">
