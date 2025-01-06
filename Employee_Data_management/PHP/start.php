@@ -5,8 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Data Management</title>
     <link rel="stylesheet" href="../CSS/StarT.css">
-    <link rel="stylesheet" href="../CSS/Loading_screen.css"> <!-- Link to the new CSS file -->
+    <link rel="stylesheet" href="../CSS/Loading_screen.css"> 
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: rgba(42, 52, 23, 0.9); 
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 0.9em;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .creator-name {
+            color: #99b27a; 
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body style="background-color: #2a3417;">
     <!-- Loading screen element -->
@@ -29,6 +48,10 @@
             </div>
         </div>
     </main> 
+
+    <footer class="footer">
+        <p style="margin: 0;">System of  <span class="creator-name">Fatima Palisoc</span></p>
+    </footer>
 
     <script src="../JavaScripts/loadingScreen.js"></script>
 </body>
