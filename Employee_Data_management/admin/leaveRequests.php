@@ -4,17 +4,22 @@ include("../database/adminAcc_database.php");
 
 // Handle approve/deny actions
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && isset($_POST['request_id'])) {
-    $action = $_POST['action'];
     $request_id = $_POST['request_id'];
+    $action = $_POST['action'];
     
-    $status = ($action === 'approve') ? 'approved' : 'rejected';
+    if ($action === 'approve') {
+        $sql = "UPDATE leave_requests SET status = 'approved' WHERE id = ?";
+        $success_message = "Leave request approved successfully!";
+    } else {
+        $sql = "UPDATE leave_requests SET status = 'rejected' WHERE id = ?";
+        $success_message = "Leave request denied successfully!";
+    }
     
-    $sql = "UPDATE leave_requests SET status = ? WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("si", $status, $request_id);
+    $stmt->bind_param("i", $request_id);
     
     if ($stmt->execute()) {
-        $success_message = "Request has been " . $status;
+        $success_message = "Request has been " . (($action === 'approve') ? 'approved' : 'rejected');
     } else {
         $error_message = "Error updating request: " . $conn->error;
     }
@@ -22,7 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && isset($_P
 }
 
 // Fetch all leave requests
-$sql = "SELECT * FROM leave_requests ORDER BY created_at DESC";
+$sql = "SELECT lr.*, ed.Fname, ed.Lname 
+        FROM leave_requests lr
+        LEFT JOIN employee_data ed ON lr.email = ed.email
+        ORDER BY lr.created_at DESC";
 $result = $conn->query($sql);
 
 // Check if table exists
@@ -38,7 +46,10 @@ if ($result === false) {
         } while ($conn->more_results() && $conn->next_result());
         
         // Now fetch the requests again
-        $sql = "SELECT * FROM leave_requests ORDER BY created_at DESC";
+        $sql = "SELECT lr.*, ed.Fname, ed.Lname 
+                FROM leave_requests lr
+                LEFT JOIN employee_data ed ON lr.email = ed.email
+                ORDER BY lr.created_at DESC";
         $result = $conn->query($sql);
     }
 }
@@ -54,35 +65,271 @@ if ($result === false) {
     <link rel="stylesheet" type="text/css" href="../CSS/Loading_screen.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
-        /* Search bar styling */
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #556B2F;
+            color: white;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 5px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .back-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #556B2F;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Status Styles */
+        .status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .approved {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .pending {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .rejected {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        /* Button Styles */
+        .actions {
+            display: flex;
+            gap: 5px;
+            justify-content: flex-start;
+        }
+
+        .approve-btn, .reject-btn, .delete-btn {
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: white;
+        }
+
+        .approve-btn {
+            background-color: #28a745;
+        }
+
+        .approve-btn:hover {
+            background-color: #218838;
+        }
+
+        .reject-btn {
+            background-color: #dc3545;
+        }
+
+        .reject-btn:hover {
+            background-color: #c82333;
+        }
+
+        .delete-btn {
+            background-color: #6c757d;
+        }
+
+        .delete-btn:hover {
+            background-color: #5a6268;
+        }
+
+        /* Search Bar Styles */
         .search-container {
-            margin: 20px auto;
-            text-align: center;
-            max-width: 600px;
+            margin-bottom: 20px;
         }
 
         .search-bar {
             width: 100%;
-            padding: 12px 20px;
-            border: 2px solid var(--base-color);
-            border-radius: 25px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             font-size: 16px;
-            outline: none;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
+            transition: border-color 0.3s;
         }
 
         .search-bar:focus {
-            border-color: var(--darker-shade);
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            outline: none;
+            border-color: #556B2F;
         }
 
-        /* Highlight styling */
-        .highlight {
-            background-color: #fff3cd;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-weight: bold;
+        /* Loading Screen */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #556B2F;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .confirm-btn, .cancel-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .confirm-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .confirm-btn:hover {
+            background-color: #c82333;
+        }
+
+        .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background-color: #5a6268;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            th, td {
+                padding: 8px 10px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
         }
     </style>
 </head>
@@ -119,46 +366,80 @@ if ($result === false) {
                 </div>
             <?php endif; ?>
 
-            <div class="requests-container">
-                <?php if ($result->num_rows > 0): ?>
-                    <?php while($row = $result->fetch_assoc()): ?>
-                        <div class="request-card <?php echo $row['status']; ?>" data-searchable>
-                            <div class="request-header">
-                                <span class="employee-email searchable"><?php echo htmlspecialchars($row['email']); ?></span>
-                                <span class="status-badge <?php echo $row['status']; ?> searchable">
-                                    <?php echo ucfirst($row['status']); ?>
-                                </span>
-                            </div>
-                            <div class="request-details">
-                                <p><strong>Leave Type:</strong> <span class="searchable"><?php echo ucfirst($row['leave_type']); ?></span></p>
-                                <p><strong>From:</strong> <span class="searchable"><?php echo $row['start_date']; ?></span></p>
-                                <p><strong>To:</strong> <span class="searchable"><?php echo $row['end_date']; ?></span></p>
-                                <p><strong>Reason:</strong> <span class="searchable"><?php echo htmlspecialchars($row['reason']); ?></span></p>
-                                <p><strong>Submitted:</strong> <span class="searchable"><?php echo date('M d, Y H:i', strtotime($row['created_at'])); ?></span></p>
-                            </div>
-                            <?php if ($row['status'] === 'pending'): ?>
-                                <div class="request-actions">
-                                    <form method="POST" style="display: inline;">
-                                        <input type="hidden" name="request_id" value="<?php echo $row['id']; ?>">
-                                        <button type="submit" name="action" value="approve" class="btn approve" onclick="showLoadingScreen()">
-                                            <i class="fas fa-check"></i> Approve
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee Name</th>
+                            <th>Email</th>
+                            <th>Leave Type</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                $statusClass = '';
+                                switch ($row['status']) {
+                                    case 'approved':
+                                        $statusClass = 'approved';
+                                        break;
+                                    case 'rejected':
+                                        $statusClass = 'rejected';
+                                        break;
+                                    default:
+                                        $statusClass = 'pending';
+                                }
+                                ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($row['Fname'] . ' ' . $row['Lname']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['leave_type']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['start_date']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['end_date']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['reason']); ?></td>
+                                    <td><span class="status <?php echo $statusClass; ?>"><?php echo ucfirst($row['status']); ?></span></td>
+                                    <td class="actions">
+                                        <?php if ($row['status'] === 'pending'): ?>
+                                            <button onclick="approveRequest(<?php echo $row['id']; ?>)" class="approve-btn">
+                                                <i class="fas fa-check"></i> Approve
+                                            </button>
+                                            <button onclick="rejectRequest(<?php echo $row['id']; ?>)" class="reject-btn">
+                                                <i class="fas fa-times"></i> Reject
+                                            </button>
+                                        <?php endif; ?>
+                                        <button class="delete-btn" onclick="deleteRequest(<?php echo $row['id']; ?>)">
+                                            <i class="fas fa-trash"></i> Delete
                                         </button>
-                                        <button type="submit" name="action" value="deny" class="btn deny" onclick="showLoadingScreen()">
-                                            <i class="fas fa-times"></i> Deny
-                                        </button>
-                                    </form>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <div class="no-requests">
-                        <i class="fas fa-inbox"></i>
-                        <p>No leave requests found</p>
-                    </div>
-                <?php endif; ?>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                        } else {
+                            echo "<tr><td colspan='8' style='text-align: center;'>No leave requests found</td></tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
             </div>
         </main>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <h2>Confirm Delete</h2>
+            <p>Are you sure you want to delete this leave request?</p>
+            <div class="modal-buttons">
+                <button onclick="confirmDelete()" class="confirm-btn">Yes, Delete</button>
+                <button onclick="hideDeleteModal()" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -166,39 +447,110 @@ if ($result === false) {
             document.getElementById('loading-screen').style.display = 'flex';
         }
 
+        function hideLoadingScreen() {
+            document.getElementById('loading-screen').style.display = 'none';
+        }
+
         function searchRequests() {
             const searchText = document.getElementById('searchBar').value.toLowerCase();
-            const requestCards = document.querySelectorAll('.request-card[data-searchable]');
+            const rows = document.querySelectorAll('tbody tr');
             
-            requestCards.forEach(card => {
-                const searchableElements = card.getElementsByClassName('searchable');
+            rows.forEach(row => {
+                const cells = row.getElementsByTagName('td');
                 let found = false;
 
-                // Remove existing highlights
-                Array.from(searchableElements).forEach(element => {
-                    element.innerHTML = element.textContent;
+                Array.from(cells).forEach(cell => {
+                    const text = cell.textContent.toLowerCase();
+                    if (text.includes(searchText)) {
+                        found = true;
+                    }
                 });
 
-                if (searchText) {
-                    // Check if any element contains the search text
-                    Array.from(searchableElements).forEach(element => {
-                        const text = element.textContent.toLowerCase();
-                        if (text.includes(searchText)) {
-                            found = true;
-                            // Add highlight
-                            element.innerHTML = element.textContent.replace(
-                                new RegExp(`(${searchText})`, 'gi'),
-                                '<span class="highlight">$1</span>'
-                            );
-                        }
-                    });
-                } else {
-                    found = true;
-                }
-
-                // Show/hide card based on search match
-                card.style.display = found ? '' : 'none';
+                row.style.display = found ? '' : 'none';
             });
+        }
+
+        function approveRequest(id) {
+            handleRequest(id, 'approve');
+        }
+
+        function rejectRequest(id) {
+            handleRequest(id, 'reject');
+        }
+
+        function handleRequest(id, action) {
+            showLoadingScreen();
+            
+            fetch('handleLeaveRequest.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'id=' + encodeURIComponent(id) + '&action=' + encodeURIComponent(action)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload the page to show updated status
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                    hideLoadingScreen();
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+                hideLoadingScreen();
+            });
+        }
+
+        let requestIdToDelete = '';
+
+        function deleteRequest(id) {
+            requestIdToDelete = id;
+            document.getElementById('delete-modal').style.display = 'block';
+        }
+
+        function hideDeleteModal() {
+            document.getElementById('delete-modal').style.display = 'none';
+        }
+
+        function confirmDelete() {
+            if (!requestIdToDelete) return;
+
+            showLoadingScreen();
+            
+            fetch('deleteLeaveRequest.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'id=' + encodeURIComponent(requestIdToDelete)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload the page to show updated list
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                    hideLoadingScreen();
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+                hideLoadingScreen();
+            });
+
+            hideDeleteModal();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            var modal = document.getElementById('delete-modal');
+            if (event.target == modal) {
+                hideDeleteModal();
+            }
         }
     </script>
 </body>

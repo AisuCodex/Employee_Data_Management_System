@@ -1,5 +1,6 @@
 <?php
 include 'adminAuth.php';
+include("../Employee_Database/config.php"); // Add database connection
 ?>
 
 
@@ -42,52 +43,148 @@ include 'adminAuth.php';
 
     <!-- main content -->
     <div class="contain">
-      <section id="capstone">
-          <a class="box-link" onclick="showLoadingScreen()" href="../Employee_Database/index.php">
-              <div class="box">
-                  <h2>Employee's Data</h2>
-                  <p>Manage and view <br> Employee's Data here.</p>
-              </div>
-          </a>
-      </section>
+      <div class="container">
 
-      <section id="capstone">
-      <a class="box-link" onclick="showLoadingScreen()" href="leaveRequests.php">
-              <div class="box">
-                  <h2>Employee's Leave Request</h2>
-                  <p>Manage and view <br> Employee's Leave Request here.</p>
-              </div>
-          </a>
-      </section>
+        <div class="card-container">
+          <section id="capstone">
+              <a class="box-link" onclick="showLoadingScreen()" href="../Employee_Database/index.php">
+                  <div class="box">
+                      <h2>Employee's Data</h2>
+                      <p>Manage and view <br> Employee's Data here.</p>
+                  </div>
+              </a>
+          </section>
 
-      <section id="capstone">
-      <a class="box-link" onclick="showLoadingScreen()" href="manageAccounts.php">
-              <div class="box">
-                  <h2>Employee's Accounts</h2>
-                  <p>Manage and view <br> Employee's Accounts here.</p>
-              </div>
-          </a>
-      </section>
+          <section id="capstone">
+          <a class="box-link" onclick="showLoadingScreen()" href="leaveRequests.php">
+                  <div class="box">
+                      <h2>Employee's Leave Request</h2>
+                      <p>Manage and view <br> Employee's Leave Request here.</p>
+                  </div>
+              </a>
+          </section>
 
-      <section id="capstone">
-      <a class="box-link" onclick="showLoadingScreen()" href="adminApproval.php">
-              <div class="box">
-                  <h2>Pending Approvals</h2>
-                  <p>Manage and view <br> Pending Approvals here.</p>
-              </div>
-          </a>
-      </section>
+          <section id="capstone">
+          <a class="box-link" onclick="showLoadingScreen()" href="leaveStatistics.php">
+                  <div class="box">
+                      <h2>Leave Statistics</h2>
+                      <p>View detailed <br> Leave Request Statistics.</p>
+                  </div>
+              </a>
+          </section>
 
-      <section id="capstone">
-      <a class="box-link" onclick="showLoadingScreen()" href="announcements.php">
-              <div class="box">
-                  <h2>Announcements</h2>
-                  <p>Create and manage <br> Announcements here.</p>
-              </div>
-          </a>
-      </section>
+          <section id="capstone">
+          <a class="box-link" onclick="showLoadingScreen()" href="manageAccounts.php">
+                  <div class="box">
+                      <h2>Employee's Accounts</h2>
+                      <p>Manage and view <br> Employee's Accounts here.</p>
+                  </div>
+              </a>
+          </section>
 
+          <section id="capstone">
+          <a class="box-link" onclick="showLoadingScreen()" href="adminApproval.php">
+                  <div class="box">
+                      <h2>Pending Approvals</h2>
+                      <p>Manage and view <br> Pending Approvals here.</p>
+                  </div>
+              </a>
+          </section>
 
+          <section id="capstone">
+          <a class="box-link" onclick="showLoadingScreen()" href="announcements.php">
+                  <div class="box">
+                      <h2>Announcements</h2>
+                      <p>Create and manage <br> Announcements here.</p>
+                  </div>
+              </a>
+          </section>
+        </div>
+
+        <style>
+            .dashboard-summary {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+                margin-bottom: 30px;
+            }
+
+            .summary-card {
+                background-color: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                text-align: center;
+            }
+
+            .summary-card i {
+                font-size: 2em;
+                color: #556B2F;
+                margin-bottom: 10px;
+            }
+
+            .summary-card h3 {
+                margin: 10px 0;
+                color: #333;
+            }
+
+            .summary-card p {
+                font-size: 2em;
+                font-weight: bold;
+                color: #556B2F;
+                margin: 0;
+            }
+
+            .leave-statistics {
+                background-color: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                margin-bottom: 30px;
+            }
+
+            .leave-statistics h2 {
+                color: #556B2F;
+                margin-bottom: 20px;
+            }
+
+            .statistics-table {
+                overflow-x: auto;
+            }
+
+            .statistics-table table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .statistics-table th,
+            .statistics-table td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #eee;
+            }
+
+            .statistics-table th {
+                background-color: #f8f9fa;
+                color: #556B2F;
+            }
+
+            .statistics-table td.approved {
+                color: #28a745;
+            }
+
+            .statistics-table td.pending {
+                color: #ffc107;
+            }
+
+            .statistics-table td.rejected {
+                color: #dc3545;
+            }
+
+            .statistics-table tr:hover {
+                background-color: #f8f9fa;
+            }
+        </style>
 
   <!-- Logout Confirmation Modal -->
   <div id="logout-modal" class="modal">

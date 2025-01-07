@@ -92,7 +92,7 @@ $stmt->close();
 
        <div class="card-container">
 
-       <div class="card">
+            <div class="card">
                 <i class="fas fa-bullhorn"></i>
                 <h3>Announcements</h3>
                 <p>View company announcements</p>
@@ -100,10 +100,17 @@ $stmt->close();
             </div>
 
             <div class="card">
-            <i class="fa-solid fa-clipboard-list"></i>
+                <i class="fa-solid fa-clipboard-list"></i>
                 <h3>Add my Info</h3>
                 <p>Add your Info here</p>
                 <a href="../PHP/create.php" class="view-btn" onclick="showLoadingScreen()">Add</a>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-history"></i>
+                <h3>Data Approval History</h3>
+                <p>View your data approval status</p>
+                <a href="dataApprovalHistory.php" class="view-btn" onclick="showLoadingScreen()">View</a>
             </div>
 
        </div>
@@ -150,177 +157,79 @@ $stmt->close();
             </section>
 
             <section class="leave-history">
-                <h2>History</h2>
-                <div class="history-tabs">
-                    <button class="tab-btn active" onclick="showTab('leave')">Leave Requests</button>
-                    <button class="tab-btn" onclick="showTab('approval')">Data Approvals</button>
-                </div>
-
-                <div id="leave-history" class="tab-content active">
-                    <div class="leave-list">
-                        <?php if ($result && $result->num_rows > 0): ?>
-                            <?php while($row = $result->fetch_assoc()): ?>
-                                <div class="leave-item">
-                                    <div class="leave-type"><?php echo ucfirst($row['leave_type']); ?> Leave</div>
-                                    <div class="leave-dates">
-                                        From: <?php echo $row['start_date']; ?><br>
-                                        To: <?php echo $row['end_date']; ?>
-                                    </div>
-                                    <div class="leave-status <?php echo $row['status']; ?>">
-                                        Status: <?php echo ucfirst($row['status']); ?>
-                                    </div>
+                <h2>Leave History</h2>
+                <div class="leave-list">
+                    <?php if ($result && $result->num_rows > 0): ?>
+                        <?php while($row = $result->fetch_assoc()): ?>
+                            <div class="leave-item">
+                                <div class="leave-type"><?php echo ucfirst($row['leave_type']); ?> Leave</div>
+                                <div class="leave-dates">
+                                    From: <?php echo $row['start_date']; ?><br>
+                                    To: <?php echo $row['end_date']; ?>
                                 </div>
-                            <?php endwhile; ?>
-                        <?php else: ?>
-                            <p>No leave history found.</p>
-                        <?php endif; ?>
-                    </div>
-                </div>
-
-                <div id="approval-history" class="tab-content">
-                    <div class="approval-list">
-                        <?php
-                        // Get user's approval history
-                        $email = $_SESSION['email'];
-                        $approval_sql = "SELECT * FROM pending_approvals WHERE email = ? ORDER BY created_at DESC";
-                        $stmt = $conn->prepare($approval_sql);
-                        $stmt->bind_param("s", $email);
-                        $stmt->execute();
-                        $approval_result = $stmt->get_result();
-                        $stmt->close();
-
-                        if ($approval_result && $approval_result->num_rows > 0):
-                            while($row = $approval_result->fetch_assoc()):
-                        ?>
-                            <div class="approval-item">
-                                <div class="approval-header">
-                                    <span class="position"><?php echo htmlspecialchars($row['position']); ?></span>
-                                    <div class="approval-status <?php echo $row['status']; ?>">
-                                        Status: <?php echo ucfirst($row['status']); ?>
-                                    </div>
-                                </div>
-                                <div class="approval-details">
-                                    <div>Name: <?php echo htmlspecialchars($row['Fname']) . ' ' . htmlspecialchars($row['Lname']); ?></div>
-                                    <div>Submitted: <?php echo date('F j, Y g:i A', strtotime($row['created_at'])); ?></div>
-                                    <?php if ($row['action_date']): ?>
-                                        <div>Action taken: <?php echo date('F j, Y g:i A', strtotime($row['action_date'])); ?></div>
-                                    <?php endif; ?>
+                                <div class="leave-status <?php echo $row['status']; ?>">
+                                    Status: <?php echo ucfirst($row['status']); ?>
                                 </div>
                             </div>
-                        <?php
-                            endwhile;
-                        else:
-                        ?>
-                            <p>No approval history found.</p>
-                        <?php endif; ?>
-                    </div>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <p>No leave history found.</p>
+                    <?php endif; ?>
                 </div>
             </section>
 
             <style>
-                .history-tabs {
-                    display: flex;
-                    gap: 10px;
-                    margin-bottom: 20px;
+                .leave-history {
+                    margin-top: 2rem;
+                    padding: 1rem;
                 }
 
-                .tab-btn {
-                    padding: 10px 20px;
-                    border: none;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    background-color: #808080;  
-                    color: white;  
-                    transition: all 0.3s ease;
+                .leave-list {
+                    display: grid;
+                    gap: 1rem;
                 }
 
-                .tab-btn:hover {
-                    opacity: 0.9;
-                }
-
-                .tab-btn.active {
-                    background-color: #556B2F;  
-                    color: white;
-                }
-
-                .tab-content {
-                    display: none;
-                }
-
-                .tab-content.active {
-                    display: block;
-                }
-
-                .approval-item {
+                .leave-item {
                     background-color: white;
+                    padding: 1rem;
                     border-radius: 8px;
-                    padding: 15px;
-                    margin-bottom: 15px;
                     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                 }
 
-                .approval-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 10px;
-                }
-
-                .position {
+                .leave-type {
                     font-weight: bold;
                     color: var(--primary-color);
+                    margin-bottom: 0.5rem;
                 }
 
-                .approval-status {
-                    padding: 5px 10px;
+                .leave-dates {
+                    font-size: 0.9em;
+                    color: #666;
+                    margin-bottom: 0.5rem;
+                }
+
+                .leave-status {
+                    display: inline-block;
+                    padding: 0.25rem 0.5rem;
                     border-radius: 4px;
                     font-size: 0.9em;
                 }
 
-                .approval-status.pending {
+                .leave-status.pending {
                     background-color: #ffc107;
                     color: #000;
                 }
 
-                .approval-status.approved {
+                .leave-status.approved {
                     background-color: #28a745;
                     color: white;
                 }
 
-                .approval-status.denied {
+                .leave-status.rejected {
                     background-color: #dc3545;
                     color: white;
                 }
-
-                .approval-details {
-                    font-size: 0.9em;
-                    color: #666;
-                }
-
-                .approval-details > div {
-                    margin-bottom: 5px;
-                }
             </style>
-
-            <script>
-                function showTab(tabName) {
-                    // Hide all tab contents
-                    document.querySelectorAll('.tab-content').forEach(content => {
-                        content.classList.remove('active');
-                    });
-
-                    // Remove active class from all buttons
-                    document.querySelectorAll('.tab-btn').forEach(btn => {
-                        btn.classList.remove('active');
-                    });
-
-                    // Show selected tab content
-                    document.getElementById(tabName + '-history').classList.add('active');
-                    
-                    // Add active class to clicked button
-                    event.target.classList.add('active');
-                }
-            </script>
         </main>
     </div>
 
