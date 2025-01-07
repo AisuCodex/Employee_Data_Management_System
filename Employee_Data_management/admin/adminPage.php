@@ -70,10 +70,10 @@ include 'adminAuth.php';
       </section>
 
       <section id="capstone">
-      <a class="box-link" onclick="showLoadingScreen()" href="leaveCounter.php">
+      <a class="box-link" onclick="showLoadingScreen()" href="adminApproval.php">
               <div class="box">
-                  <h2>Employee's Leave Counter</h2>
-                  <p>Manage and view <br> Employee's Leave here.</p>
+                  <h2>Pending Approvals</h2>
+                  <p>Manage and view <br> Pending Approvals here.</p>
               </div>
           </a>
       </section>

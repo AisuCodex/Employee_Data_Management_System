@@ -12,22 +12,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $phone = $_POST['phone'];
 
-    // Check if table is empty to set first ID as 1
-    $check_empty = "SELECT COUNT(*) as count FROM employee_data";
-    $result = $conn->query($check_empty);
-    $row = $result->fetch_assoc();
-    $count = $row['count'];
-
-    if ($count == 0) {
-        $sql = "ALTER TABLE employee_data AUTO_INCREMENT = 1";
-        $conn->query($sql);
-    }
-
-    $sql = "INSERT INTO employee_data (id, Fname, Lname, gender, date_birth, Address, position, salary, email, phone) 
-            VALUES (COALESCE((SELECT MAX(id) + 1 FROM employee_data e2), 1), '$Fname', '$Lname', '$gender', '$date_birth', '$Address', '$position', '$salary', '$email', '$phone')";
+    $sql = "INSERT INTO pending_approvals (Fname, Lname, gender, date_birth, Address, position, salary, email, phone) 
+            VALUES ('$Fname', '$Lname', '$gender', '$date_birth', '$Address', '$position', '$salary', '$email', '$phone')";
     
     if ($conn->query($sql) === TRUE) {
-        header("Location: employeePage.php");
+        echo "<script>alert('Your information has been submitted for approval.'); window.location.href='employeePage.php';</script>";
         exit();
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
@@ -81,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label for="phone">Phone:</label>
         <input type="tel" id="phone" name="phone" required><br>
 
-        <button type="submit">Add Employee</button>
+        <button type="submit">Send info</button>
     </form>
 </body>
 </html>
