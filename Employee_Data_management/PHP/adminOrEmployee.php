@@ -20,7 +20,7 @@
       </div>
       <div class="btn-div">
         <p class="text1">Are you?</p>
-        <a class="btn" href="register_process.php" onclick="showLoadingScreen()">EMPLOYEE</a>
+        <a class="btn" href="loginPage.php" onclick="showLoadingScreen()">EMPLOYEE</a>
         <a class="btn" href="adminLogin.php" onclick="showLoadingScreen()">ADMIN</a>
       </div>
     </div>

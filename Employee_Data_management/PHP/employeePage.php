@@ -1,7 +1,6 @@
 <?php
 include("employeeAuth.php");
 include("../database/adminAcc_database.php");
-include("leave_counter.php");
 
 // Handle leave message submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_leave'])) {
@@ -33,9 +32,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_leave'])) {
         $stmt->bind_param("sssss", $email, $leave_type, $start_date, $end_date, $reason);
         $stmt->execute();
         $stmt->close();
-        
-        // Record the leave request count
-        recordLeaveRequest($employee_id);
         
         // Commit transaction
         $conn->commit();
