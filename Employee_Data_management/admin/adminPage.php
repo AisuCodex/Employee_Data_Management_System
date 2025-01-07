@@ -55,7 +55,7 @@ include 'adminAuth.php';
       <a class="box-link" onclick="showLoadingScreen()" href="leaveRequests.php">
               <div class="box">
                   <h2>Employee's Leave Request</h2>
-                  <p>Manage and view <br> Employee'sLeave Request here.</p>
+                  <p>Manage and view <br> Employee's Leave Request here.</p>
               </div>
           </a>
       </section>
@@ -65,6 +65,15 @@ include 'adminAuth.php';
               <div class="box">
                   <h2>Employee's Accounts</h2>
                   <p>Manage and view <br> Employee's Accounts here.</p>
+              </div>
+          </a>
+      </section>
+
+      <section id="capstone">
+      <a class="box-link" onclick="showLoadingScreen()" href="leaveCounter.php">
+              <div class="box">
+                  <h2>Employee's Leave Counter</h2>
+                  <p>Manage and view <br> Employee's Leave here.</p>
               </div>
           </a>
       </section>

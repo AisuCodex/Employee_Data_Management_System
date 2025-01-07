@@ -173,10 +173,19 @@ textarea {
     color: #721c24;
 }
 
+.card-container {
+    display: grid;
+    grid-template-columns: 400px 400px;
+    gap: 15px;  
+    margin-bottom: 30px;
+}
+
 .card{
     display: flex;
     flex-direction: column;
     gap: 15px;
+    max-width: 600px;
+    margin-bottom: 30px;
     background-color: #f8f9fa;
     padding: 15px;
     border-radius: 5px;

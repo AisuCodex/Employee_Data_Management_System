@@ -1,27 +1,50 @@
 <?php
 include("employeeAuth.php");
 include("../database/adminAcc_database.php");
+include("leave_counter.php");
 
 // Handle leave message submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_leave'])) {
     $email = $_SESSION['email'];
+    
+    // Get employee ID
+    $get_emp_id = "SELECT id FROM employee_data WHERE email = ?";
+    $stmt = $conn->prepare($get_emp_id);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $emp_result = $stmt->get_result();
+    $employee = $emp_result->fetch_assoc();
+    $employee_id = $employee['id'];
+    $stmt->close();
+    
     $leave_type = mysqli_real_escape_string($conn, $_POST['leave_type']);
     $start_date = mysqli_real_escape_string($conn, $_POST['start_date']);
     $end_date = mysqli_real_escape_string($conn, $_POST['end_date']);
     $reason = mysqli_real_escape_string($conn, $_POST['reason']);
     
-    $sql = "INSERT INTO leave_requests (email, leave_type, start_date, end_date, reason) 
-            VALUES (?, ?, ?, ?, ?)";
-            
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssss", $email, $leave_type, $start_date, $end_date, $reason);
+    // Start transaction
+    $conn->begin_transaction();
     
-    if ($stmt->execute()) {
+    try {
+        // Insert leave request
+        $sql = "INSERT INTO leave_requests (email, leave_type, start_date, end_date, reason) 
+                VALUES (?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssss", $email, $leave_type, $start_date, $end_date, $reason);
+        $stmt->execute();
+        $stmt->close();
+        
+        // Record the leave request count
+        recordLeaveRequest($employee_id);
+        
+        // Commit transaction
+        $conn->commit();
         $_SESSION['success_message'] = "Leave request submitted successfully!";
-    } else {
-        $_SESSION['error_message'] = "Error: " . $conn->error;
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $conn->rollback();
+        $_SESSION['error_message'] = "Error: " . $e->getMessage();
     }
-    $stmt->close();
     
     // Redirect to prevent form resubmission
     header("Location: " . $_SERVER['PHP_SELF']);
@@ -70,6 +93,25 @@ $stmt->close();
             <h1>Employee Dashboard</h1>
             <a href="#" id="logout-link" class="logout-btn">Logout <i class="fa-solid fa-right-from-bracket"></i></a>
         </header>
+
+       <div class="card-container">
+
+       <div class="card">
+                <i class="fas fa-bullhorn"></i>
+                <h3>Announcements</h3>
+                <p>View company announcements</p>
+                <a href="viewAnnouncements.php" class="view-btn" onclick="showLoadingScreen()">View</a>
+            </div>
+
+            <div class="card">
+            <i class="fa-solid fa-clipboard-list"></i>
+                <h3>Add my Info</h3>
+                <p>Add your Info here</p>
+                <a href="../PHP/create.php" class="view-btn" onclick="showLoadingScreen()">Add</a>
+            </div>
+
+       </div>
+
 
         <main>
             <section class="leave-request-form">
@@ -133,12 +175,7 @@ $stmt->close();
                 </div>
             </section>
             
-            <div class="card">
-                <i class="fas fa-bullhorn"></i>
-                <h3>Announcements</h3>
-                <p>View company announcements</p>
-                <a href="viewAnnouncements.php" class="view-btn" onclick="showLoadingScreen()">View</a>
-            </div>
+
         </main>
     </div>
 
