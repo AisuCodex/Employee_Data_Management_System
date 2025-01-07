@@ -273,10 +273,10 @@ $result = $conn->query("SELECT * FROM announcements ORDER BY date_posted DESC");
                                     <span class="importance-badge importance-<?php echo $row['importance']; ?> searchable">
                                         <?php echo ucfirst($row['importance']); ?>
                                     </span>
-                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this announcement?');">
+                                    <form method="POST" style="display: inline;" onsubmit="return confirmDelete(event);">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                        <button type="submit" class="delete-btn" onclick="showLoadingScreen()">
+                                        <button type="submit" class="delete-btn">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -304,6 +304,20 @@ $result = $conn->query("SELECT * FROM announcements ORDER BY date_posted DESC");
     <script>
         function showLoadingScreen() {
             document.getElementById('loading-screen').style.display = 'flex';
+        }
+
+        function hideLoadingScreen() {
+            document.getElementById('loading-screen').style.display = 'none';
+        }
+
+        function confirmDelete(event) {
+            if (confirm('Are you sure you want to delete this announcement?')) {
+                showLoadingScreen();
+                return true;
+            } else {
+                event.preventDefault();
+                return false;
+            }
         }
 
         function searchAnnouncements() {
