@@ -150,28 +150,177 @@ $stmt->close();
             </section>
 
             <section class="leave-history">
-                <h2>Leave History</h2>
-                <div class="leave-list">
-                    <?php if ($result && $result->num_rows > 0): ?>
-                        <?php while($row = $result->fetch_assoc()): ?>
-                            <div class="leave-item">
-                                <div class="leave-type"><?php echo ucfirst($row['leave_type']); ?> Leave</div>
-                                <div class="leave-dates">
-                                    From: <?php echo $row['start_date']; ?><br>
-                                    To: <?php echo $row['end_date']; ?>
+                <h2>History</h2>
+                <div class="history-tabs">
+                    <button class="tab-btn active" onclick="showTab('leave')">Leave Requests</button>
+                    <button class="tab-btn" onclick="showTab('approval')">Data Approvals</button>
+                </div>
+
+                <div id="leave-history" class="tab-content active">
+                    <div class="leave-list">
+                        <?php if ($result && $result->num_rows > 0): ?>
+                            <?php while($row = $result->fetch_assoc()): ?>
+                                <div class="leave-item">
+                                    <div class="leave-type"><?php echo ucfirst($row['leave_type']); ?> Leave</div>
+                                    <div class="leave-dates">
+                                        From: <?php echo $row['start_date']; ?><br>
+                                        To: <?php echo $row['end_date']; ?>
+                                    </div>
+                                    <div class="leave-status <?php echo $row['status']; ?>">
+                                        Status: <?php echo ucfirst($row['status']); ?>
+                                    </div>
                                 </div>
-                                <div class="leave-status <?php echo $row['status']; ?>">
-                                    Status: <?php echo ucfirst($row['status']); ?>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <p>No leave history found.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div id="approval-history" class="tab-content">
+                    <div class="approval-list">
+                        <?php
+                        // Get user's approval history
+                        $email = $_SESSION['email'];
+                        $approval_sql = "SELECT * FROM pending_approvals WHERE email = ? ORDER BY created_at DESC";
+                        $stmt = $conn->prepare($approval_sql);
+                        $stmt->bind_param("s", $email);
+                        $stmt->execute();
+                        $approval_result = $stmt->get_result();
+                        $stmt->close();
+
+                        if ($approval_result && $approval_result->num_rows > 0):
+                            while($row = $approval_result->fetch_assoc()):
+                        ?>
+                            <div class="approval-item">
+                                <div class="approval-header">
+                                    <span class="position"><?php echo htmlspecialchars($row['position']); ?></span>
+                                    <div class="approval-status <?php echo $row['status']; ?>">
+                                        Status: <?php echo ucfirst($row['status']); ?>
+                                    </div>
+                                </div>
+                                <div class="approval-details">
+                                    <div>Name: <?php echo htmlspecialchars($row['Fname']) . ' ' . htmlspecialchars($row['Lname']); ?></div>
+                                    <div>Submitted: <?php echo date('F j, Y g:i A', strtotime($row['created_at'])); ?></div>
+                                    <?php if ($row['action_date']): ?>
+                                        <div>Action taken: <?php echo date('F j, Y g:i A', strtotime($row['action_date'])); ?></div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                        <p>No leave history found.</p>
-                    <?php endif; ?>
+                        <?php
+                            endwhile;
+                        else:
+                        ?>
+                            <p>No approval history found.</p>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </section>
-            
 
+            <style>
+                .history-tabs {
+                    display: flex;
+                    gap: 10px;
+                    margin-bottom: 20px;
+                }
+
+                .tab-btn {
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    background-color: #808080;  
+                    color: white;  
+                    transition: all 0.3s ease;
+                }
+
+                .tab-btn:hover {
+                    opacity: 0.9;
+                }
+
+                .tab-btn.active {
+                    background-color: #556B2F;  
+                    color: white;
+                }
+
+                .tab-content {
+                    display: none;
+                }
+
+                .tab-content.active {
+                    display: block;
+                }
+
+                .approval-item {
+                    background-color: white;
+                    border-radius: 8px;
+                    padding: 15px;
+                    margin-bottom: 15px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+
+                .approval-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 10px;
+                }
+
+                .position {
+                    font-weight: bold;
+                    color: var(--primary-color);
+                }
+
+                .approval-status {
+                    padding: 5px 10px;
+                    border-radius: 4px;
+                    font-size: 0.9em;
+                }
+
+                .approval-status.pending {
+                    background-color: #ffc107;
+                    color: #000;
+                }
+
+                .approval-status.approved {
+                    background-color: #28a745;
+                    color: white;
+                }
+
+                .approval-status.denied {
+                    background-color: #dc3545;
+                    color: white;
+                }
+
+                .approval-details {
+                    font-size: 0.9em;
+                    color: #666;
+                }
+
+                .approval-details > div {
+                    margin-bottom: 5px;
+                }
+            </style>
+
+            <script>
+                function showTab(tabName) {
+                    // Hide all tab contents
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.tab-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+
+                    // Show selected tab content
+                    document.getElementById(tabName + '-history').classList.add('active');
+                    
+                    // Add active class to clicked button
+                    event.target.classList.add('active');
+                }
+            </script>
         </main>
     </div>
 
