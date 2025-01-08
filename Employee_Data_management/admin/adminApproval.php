@@ -8,36 +8,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $action = $_POST['action'];
     
     if ($action === 'approve') {
-        // Get the pending data
-        $select_sql = "SELECT * FROM pending_approvals WHERE id = $id";
-        $result = $conn->query($select_sql);
-        $row = $result->fetch_assoc();
+        // Start transaction
+        $conn->begin_transaction();
         
-        // Insert into employee_data
-        $insert_sql = "INSERT INTO employee_data (Fname, Lname, gender, date_birth, Address, position, salary, email, phone) 
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($insert_sql);
-        $stmt->bind_param("ssssssdss", 
-            $row['Fname'], 
-            $row['Lname'], 
-            $row['gender'], 
-            $row['date_birth'], 
-            $row['Address'], 
-            $row['position'], 
-            $row['salary'], 
-            $row['email'], 
-            $row['phone']
-        );
-        
-        if ($stmt->execute()) {
-            // Update status in pending_approvals
-            $update_sql = "UPDATE pending_approvals SET status = 'approved', action_date = CURRENT_TIMESTAMP WHERE id = ?";
-            $stmt = $conn->prepare($update_sql);
+        try {
+            // Get the pending data
+            $select_sql = "SELECT * FROM pending_approvals WHERE id = ?";
+            $stmt = $conn->prepare($select_sql);
             $stmt->bind_param("i", $id);
             $stmt->execute();
-            $success_message = "Application approved successfully!";
-        } else {
-            $error_message = "Error approving application: " . $conn->error;
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+            
+            // Insert into employee_data
+            $insert_sql = "INSERT INTO employee_data (Fname, Lname, gender, date_birth, Address, position, salary, email, phone) 
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($insert_sql);
+            $stmt->bind_param("ssssssdss", 
+                $row['Fname'], 
+                $row['Lname'], 
+                $row['gender'], 
+                $row['date_birth'], 
+                $row['Address'], 
+                $row['position'], 
+                $row['salary'], 
+                $row['email'], 
+                $row['phone']
+            );
+            
+            if ($stmt->execute()) {
+                // Update status in pending_approvals
+                $update_sql = "UPDATE pending_approvals SET status = 'approved', action_date = CURRENT_TIMESTAMP WHERE id = ?";
+                $stmt = $conn->prepare($update_sql);
+                $stmt->bind_param("i", $id);
+                $stmt->execute();
+                
+                // Commit the transaction
+                $conn->commit();
+                $success_message = "Application approved successfully!";
+            } else {
+                throw new Exception($conn->error);
+            }
+        } catch (Exception $e) {
+            // Rollback the transaction on error
+            $conn->rollback();
+            $error_message = "Error approving application: " . $e->getMessage();
         }
     } else if ($action === 'deny') {
         $update_sql = "UPDATE pending_approvals SET status = 'denied', action_date = CURRENT_TIMESTAMP WHERE id = ?";

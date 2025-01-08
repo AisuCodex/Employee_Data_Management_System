@@ -335,6 +335,10 @@ $leave_count_result = $conn->query($leave_count_sql);
             document.getElementById('loading-screen').style.display = 'flex';
         }
 
+        function hideLoadingScreen() {
+            document.getElementById('loading-screen').style.display = 'none';
+        }
+
         function searchTable() {
             const input = document.getElementById('searchInput');
             const filter = input.value.toLowerCase();
@@ -372,12 +376,12 @@ $leave_count_result = $conn->query($leave_count_sql);
 
             showLoadingScreen();
             
+            const formData = new FormData();
+            formData.append('email', emailToDelete);
+            
             fetch('deleteLeaveStatistics.php', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'email=' + encodeURIComponent(emailToDelete)
+                body: formData
             })
             .then(response => response.json())
             .then(data => {
@@ -390,7 +394,8 @@ $leave_count_result = $conn->query($leave_count_sql);
                 }
             })
             .catch(error => {
-                alert('Error: ' + error);
+                console.error('Error:', error);
+                alert('An error occurred while deleting the statistics');
                 hideLoadingScreen();
             });
 
@@ -399,8 +404,7 @@ $leave_count_result = $conn->query($leave_count_sql);
 
         // Close modal when clicking outside
         window.onclick = function(event) {
-            var modal = document.getElementById('delete-modal');
-            if (event.target == modal) {
+            if (event.target == document.getElementById('delete-modal')) {
                 hideDeleteModal();
             }
         }
