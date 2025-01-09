@@ -12,14 +12,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $phone = $_POST['phone'];
 
+    // Check if email already exists in employee_data table
+    $check_sql = "SELECT email FROM employee_data WHERE email = ?";
+    $check_stmt = $conn->prepare($check_sql);
+
+    if (!$check_stmt) {
+        die("Prepare failed: " . $conn->error);
+    }
+
+    $check_stmt->bind_param("s", $email);
+    $check_stmt->execute();
+    $result = $check_stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        echo "<script>alert('This email is already registered!'); window.history.back();</script>";
+        exit();
+    }
+
+    // Corrected SQL statement
     $sql = "INSERT INTO pending_approvals (Fname, Lname, gender, date_birth, Address, position, salary, email, phone) 
-            VALUES ('$Fname', '$Lname', '$gender', '$date_birth', '$Address', '$position', '$salary', '$email', '$phone')";
-    
-    if ($conn->query($sql) === TRUE) {
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $insert_stmt = $conn->prepare($sql);
+
+    if (!$insert_stmt) {
+        die("Prepare failed: " . $conn->error);
+    }
+
+    $insert_stmt->bind_param("ssssssiss", $Fname, $Lname, $gender, $date_birth, $Address, $position, $salary, $email, $phone);
+
+    if ($insert_stmt->execute()) {
         echo "<script>alert('Your information has been submitted for approval.'); window.location.href='employeePage.php';</script>";
         exit();
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $insert_stmt->error;
     }
 }
 ?>
