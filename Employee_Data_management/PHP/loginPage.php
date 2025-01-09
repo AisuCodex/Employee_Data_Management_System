@@ -2,6 +2,20 @@
 // Include the database connection
 include("../database/adminAcc_database.php");
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Debug database connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Check current database
+$result = $conn->query("SELECT DATABASE()");
+$row = $result->fetch_row();
+error_log("Current database: " . $row[0]);
+
 // Start employee session with unique name
 session_name('employee_session');
 session_start();
@@ -12,25 +26,78 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Prepare statement to prevent SQL injection
-    $stmt = $conn->prepare("SELECT * FROM employee_acc WHERE email = ? AND password = ?");
-    $stmt->bind_param("ss", $email, $password);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Debug output
+    error_log("Login attempt for email: " . $email);
 
-    // Check if email and password are correct
-    if ($result->num_rows > 0) {
-        // Password is correct, set session variable
-        $_SESSION['email'] = $email;
-        header("Location: employeePage.php");
-        exit();
+    // Check if employee_logs table exists
+    $table_check = $conn->query("SHOW TABLES LIKE 'employee_logs'");
+    if ($table_check->num_rows == 0) {
+        error_log("WARNING: employee_logs table does not exist!");
     } else {
-        // Invalid email or password
-        $errorMessage = 'Invalid email or password.';
+        error_log("employee_logs table exists");
     }
 
-    // Close statement
-    $stmt->close();
+    // Prepare statement to prevent SQL injection
+    $stmt = $conn->prepare("SELECT * FROM employee_acc WHERE email = ? AND password = ?");
+    if ($stmt) {
+        $stmt->bind_param("ss", $email, $password);
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+
+            // Check if email and password are correct
+            if ($result->num_rows > 0) {
+                // Password is correct, set session variables
+                $_SESSION['email'] = $email;
+                
+                // First, update any existing active sessions for this user to logged_out
+                $update_sql = "UPDATE employee_logs SET status = 'logged_out', logout_time = NOW() WHERE email = ? AND status = 'active'";
+                $update_stmt = $conn->prepare($update_sql);
+                if ($update_stmt) {
+                    $update_stmt->bind_param("s", $email);
+                    $update_stmt->execute();
+                    $update_stmt->close();
+                }
+                
+                // Now insert the new login record
+                $log_sql = "INSERT INTO employee_logs (email, login_time, status) VALUES (?, NOW(), 'active')";
+                $log_stmt = $conn->prepare($log_sql);
+                if ($log_stmt) {
+                    $log_stmt->bind_param("s", $email);
+                    if ($log_stmt->execute()) {
+                        $_SESSION['login_id'] = $log_stmt->insert_id;
+                        error_log("Successfully recorded login with ID: " . $log_stmt->insert_id);
+                        
+                        // Verify the record was inserted
+                        $verify = $conn->query("SELECT * FROM employee_logs WHERE id = " . $log_stmt->insert_id);
+                        if ($verify && $verify->num_rows > 0) {
+                            error_log("Verified log record exists");
+                        } else {
+                            error_log("WARNING: Could not verify log record!");
+                        }
+                    } else {
+                        error_log("Failed to record login: " . $log_stmt->error);
+                    }
+                    $log_stmt->close();
+                } else {
+                    error_log("Failed to prepare log statement: " . $conn->error);
+                }
+                
+                header("Location: employeePage.php");
+                exit();
+            } else {
+                // Invalid email or password
+                $errorMessage = 'Invalid email or password.';
+                error_log("Invalid login attempt for email: " . $email);
+            }
+        } else {
+            $errorMessage = 'Database error: ' . $stmt->error;
+            error_log("Database error during login: " . $stmt->error);
+        }
+        $stmt->close();
+    } else {
+        $errorMessage = 'Database error: ' . $conn->error;
+        error_log("Failed to prepare login statement: " . $conn->error);
+    }
 }
 
 // Close database connection

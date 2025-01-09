@@ -101,7 +101,7 @@ include("../Employee_Database/config.php"); // Add database connection
           </section>
 
           <section id="capstone">
-          <a class="box-link" onclick="showLoadingScreen()" href="announcements.php">
+          <a class="box-link" onclick="showLoadingScreen()" href="employeeLogs.php">
                   <div class="box">
                       <h2>Employee Logs</h2>
                       <p>View and Manage <br> Employee Logs here.</p>
