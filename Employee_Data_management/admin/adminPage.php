@@ -201,74 +201,76 @@ include("../Employee_Database/config.php"); // Add database connection
       <span class="close">&times;</span>
       <h2>Logout Confirmation</h2>
       <p>Are you sure you want to log out?</p>
-      <button id="confirm-logout">Yes, Log Out</button>
-      <button id="cancel-logout" class="cancel">Cancel</button>
+      <div class="modal-buttons">
+        <button class="modal-button confirm-button" id="confirm-logout">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+        <button class="modal-button cancel-button" id="cancel-logout">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+      </div>
     </div>
   </div>
 
   <script>
-    function showLoadingScreen() {
-      var loadingScreen = document.getElementById('loading-screen');
-      loadingScreen.style.display = 'flex';
+    // Logout Modal Functionality
+    const modal = document.getElementById('logout-modal');
+    const logoutLink = document.getElementById('logout-link');
+    const logoutLinkMobile = document.getElementById('logout-link-mobile');
+    const closeBtn = document.querySelector('.close');
+    const confirmLogoutBtn = document.getElementById('confirm-logout');
+    const cancelLogoutBtn = document.getElementById('cancel-logout');
+
+    function showModal() {
+      modal.style.display = 'block';
+      setTimeout(() => {
+        modal.classList.add('show');
+      }, 10);
     }
 
-    function toggleMenu() {
-      var sideMenu = document.querySelector('.side-menu');
-      var hamburgerMenu = document.querySelector('.hamburger-menu');
-      sideMenu.classList.toggle('open');
-      hamburgerMenu.classList.toggle('active'); // Toggle active class for animation
+    function hideModal() {
+      modal.classList.remove('show');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300);
     }
 
-    // Get the modal and buttons
-    var modal = document.getElementById('logout-modal');
-    var closeBtn = document.querySelector('.modal .close');
-    var confirmLogoutBtn = document.getElementById('confirm-logout');
-    var cancelLogoutBtn = document.getElementById('cancel-logout');
-
-    document.getElementById('logout-link').addEventListener('click', function(event) {
-      event.preventDefault(); // Prevent the default link behavior
-      modal.style.display = 'block'; // Show the modal
+    logoutLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      showModal();
     });
 
-    closeBtn.onclick = function() {
-      modal.style.display = 'none'; // Close the modal
+    logoutLinkMobile.addEventListener('click', (e) => {
+      e.preventDefault();
+      showModal();
+    });
+
+    closeBtn.addEventListener('click', hideModal);
+    cancelLogoutBtn.addEventListener('click', hideModal);
+
+    confirmLogoutBtn.addEventListener('click', () => {
+      window.location.href = '../PHP/logout.php';
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        hideModal();
+      }
+    });
+
+    // Mobile Menu Toggle
+    function toggleMenu() {
+      const hamburger = document.querySelector('.hamburger-menu');
+      const sideMenu = document.querySelector('.side-menu');
+      hamburger.classList.toggle('active');
+      sideMenu.classList.toggle('active');
     }
 
-    cancelLogoutBtn.onclick = function() {
-      modal.style.display = 'none'; // Close the modal
+    // Loading Screen
+    function showLoadingScreen() {
+      document.getElementById('loading-screen').style.display = 'flex';
     }
-
-    confirmLogoutBtn.onclick = function() {
-      window.location.href = 'adminPage.php?logout=true'; // Redirect to logout URL
-    }
-    // Get the modal and buttons
-var modal = document.getElementById('logout-modal');
-var closeBtn = document.querySelector('.modal .close');
-var confirmLogoutBtn = document.getElementById('confirm-logout');
-var cancelLogoutBtn = document.getElementById('cancel-logout');
-
-// Attach event listeners to both logout links
-var logoutLinks = [document.getElementById('logout-link'), document.getElementById('logout-link-mobile')];
-
-logoutLinks.forEach(function(logoutLink) {
-  logoutLink.addEventListener('click', function(event) {
-    event.preventDefault(); // Prevent the default link behavior
-    modal.style.display = 'block'; // Show the modal
-  });
-});
-
-closeBtn.onclick = function() {
-  modal.style.display = 'none'; // Close the modal
-}
-
-cancelLogoutBtn.onclick = function() {
-  modal.style.display = 'none'; // Close the modal
-}
-
-confirmLogoutBtn.onclick = function() {
-  window.location.href = 'adminPage.php?logout=true'; // Redirect to logout URL
-}
-
   </script>
 </body>
 </html>
