@@ -33,10 +33,199 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
             $insert_stmt->bind_param("sss", $email, $password, $recovery_code);
             
             if ($insert_stmt->execute()) {
-                echo "<script>
-                    alert('Registration successful! Your recovery code is: " . $recovery_code . "\\nPlease save this code. You will need it to recover your password if you forget it.');
-                    window.location.href='../PHP/loginPage.php';
-                </script>";
+                echo '
+                <div id="code-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Registration Successful!</h2>
+                        </div>
+                        <div class="code-display">
+                            <p>Your recovery code is:</p>
+                            <div class="code-box">
+                                <span class="code">' . $recovery_code . '</span>
+                                <button class="copy-btn" onclick="copyCode(\'' . $recovery_code . '\')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="code-warning">Please save this code! You will need it to recover your password if you forget it.</p>
+                        <button onclick="redirectToLogin()" class="continue-btn">Continue to Login</button>
+                    </div>
+                </div>
+                <style>
+                    :root {
+                        --darkest-shade: #2a3417;
+                        --darker-shade: #3f4a22;
+                        --base-color: #556b2f;
+                        --lighter-tint: #758b4d;
+                        --lightest-tint: #99b27a;
+                        --extra-lightest-tint: #dbe4d0;
+                    }
+
+                    .modal {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(42, 52, 23, 0.8);
+                        backdrop-filter: blur(10px);
+                        -webkit-backdrop-filter: blur(10px);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 1000;
+                    }
+
+                    .modal-content {
+                        background: var(--extra-lightest-tint);
+                        padding: 0;
+                        border-radius: 15px;
+                        position: relative;
+                        width: 90%;
+                        max-width: 400px;
+                        text-align: center;
+                        animation: modalAppear 0.3s ease-out;
+                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                        overflow: hidden;
+                    }
+
+                    .modal-header {
+                        background: linear-gradient(135deg, var(--base-color), var(--lighter-tint));
+                        padding: 20px;
+                        color: white;
+                        margin-bottom: 20px;
+                    }
+
+                    .modal-header h2 {
+                        color: white;
+                        margin: 0;
+                        font-size: 1.5em;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                    }
+
+                    @keyframes modalAppear {
+                        from {
+                            opacity: 0;
+                            transform: translateY(-20px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
+
+                    .code-display {
+                        padding: 0 30px;
+                        margin: 20px 0;
+                    }
+
+                    .code-display p {
+                        color: var(--darker-shade);
+                        margin-bottom: 10px;
+                        font-weight: 500;
+                    }
+
+                    .code-box {
+                        background: rgba(255, 255, 255, 0.9);
+                        padding: 15px;
+                        border-radius: 8px;
+                        margin: 10px 0;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 10px;
+                        border: 2px solid var(--base-color);
+                    }
+
+                    .code {
+                        font-family: monospace;
+                        font-size: 24px;
+                        letter-spacing: 2px;
+                        color: var(--darker-shade);
+                        font-weight: bold;
+                    }
+
+                    .copy-btn {
+                        background: none;
+                        border: none;
+                        color: var(--base-color);
+                        cursor: pointer;
+                        padding: 8px;
+                        border-radius: 50%;
+                        transition: all 0.3s ease;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+
+                    .copy-btn:hover {
+                        background: var(--extra-lightest-tint);
+                        transform: scale(1.1);
+                    }
+
+                    .copy-btn i {
+                        font-size: 1.2em;
+                    }
+
+                    .code-warning {
+                        color: #dc3545;
+                        font-size: 0.9em;
+                        margin: 15px 30px;
+                        background: rgba(220, 53, 69, 0.1);
+                        padding: 10px;
+                        border-radius: 6px;
+                    }
+
+                    .continue-btn {
+                        background: var(--base-color);
+                        color: white;
+                        border: none;
+                        padding: 12px 30px;
+                        border-radius: 50px;
+                        cursor: pointer;
+                        font-size: 1em;
+                        transition: all 0.3s ease;
+                        margin: 20px 0 30px;
+                        font-weight: 500;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                    }
+
+                    .continue-btn:hover {
+                        background: var(--lighter-tint);
+                        transform: translateY(-2px);
+                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                    }
+                </style>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+                <script>
+                    function copyCode(code) {
+                        navigator.clipboard.writeText(code).then(() => {
+                            const btn = event.currentTarget;
+                            const icon = btn.querySelector("i");
+                            const originalClass = icon.className;
+                            
+                            // Change to checkmark
+                            icon.className = "fas fa-check";
+                            
+                            // Revert back after 1.5 seconds
+                            setTimeout(() => {
+                                icon.className = originalClass;
+                            }, 1500);
+                        });
+                    }
+
+                    function redirectToLogin() {
+                        window.location.href = "loginPage.php";
+                    }
+
+                    // Show loading screen during redirect
+                    document.querySelector(".continue-btn").addEventListener("click", function() {
+                        document.getElementById("loading-screen").style.display = "flex";
+                    });
+                </script>';
                 exit();
             } else {
                 $errorMessage = "Error: " . $insert_stmt->error;
