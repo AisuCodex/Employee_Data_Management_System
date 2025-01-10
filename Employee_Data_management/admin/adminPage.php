@@ -249,7 +249,7 @@ include("../Employee_Database/config.php"); // Add database connection
     cancelLogoutBtn.addEventListener('click', hideModal);
 
     confirmLogoutBtn.addEventListener('click', () => {
-      window.location.href = '../PHP/logout.php';
+      window.location.href = 'adminPage.php?logout=true';
     });
 
     // Close modal when clicking outside
