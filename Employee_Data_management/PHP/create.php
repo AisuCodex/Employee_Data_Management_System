@@ -9,6 +9,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Address = $_POST['Address'];
     $position = $_POST['position'];
     $salary = $_POST['salary'];
+    
+    // Check for negative salary
+    if ($salary < 0) {
+        echo "<script>alert('Salary cannot be negative!'); window.history.back();</script>";
+        exit();
+    }
+
     $email = $_POST['email'];
     $phone = $_POST['phone'];
 
