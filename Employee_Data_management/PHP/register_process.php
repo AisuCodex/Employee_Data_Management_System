@@ -24,13 +24,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         if ($result->num_rows > 0) {
             $errorMessage = "This email is already registered!";
         } else {
+            // Generate a random 6-character code
+            $recovery_code = substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 6);
+            
             // Email doesn't exist, proceed with registration
-            $insert_sql = "INSERT INTO employee_acc (email, password) VALUES (?, ?)";
+            $insert_sql = "INSERT INTO employee_acc (email, password, code) VALUES (?, ?, ?)";
             $insert_stmt = $conn->prepare($insert_sql);
-            $insert_stmt->bind_param("ss", $email, $password);
+            $insert_stmt->bind_param("sss", $email, $password, $recovery_code);
             
             if ($insert_stmt->execute()) {
-                header("Location: ../PHP/loginPage.php");
+                echo "<script>
+                    alert('Registration successful! Your recovery code is: " . $recovery_code . "\\nPlease save this code. You will need it to recover your password if you forget it.');
+                    window.location.href='../PHP/loginPage.php';
+                </script>";
                 exit();
             } else {
                 $errorMessage = "Error: " . $insert_stmt->error;

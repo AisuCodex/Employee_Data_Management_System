@@ -138,11 +138,10 @@ mysqli_close($conn);
         </div>
         <div class="choice">
           <input class="register" type="submit" name="submit" value="Login">
-
         </div>
-        <!-- Forgot Password button -->
         <div class="forgot">
-        <a class="already" href="../PHP/register_process.php" onclick="showLoadingScreen()">Don't have an account?</a>
+          <a class="forgot-pass" href="../PHP/forgot_password.php" onclick="showLoadingScreen()">Forgot Password?</a>
+          <a class="already" href="../PHP/register_process.php" onclick="showLoadingScreen()">Don't have an account?</a>
         </div>
 
         <br>

@@ -18,8 +18,8 @@ if (isset($_POST['delete_account'])) {
     }
 }
 
-// Fetch all employee_acc accounts
-$query = "SELECT id, email FROM employee_acc";  // Excluding password for security
+// Fetch all employee_acc accounts including the recovery code
+$query = "SELECT id, email, code FROM employee_acc";
 $result = $conn->query($query);
 
 if (!$result) {
@@ -64,9 +64,26 @@ if (!$result) {
             color: var(--darker-shade);
         }
 
-        .account-email {
+        .account-details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .account-email, .account-code {
             color: var(--base-color);
             font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .account-code {
+            background: rgba(85, 107, 47, 0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            letter-spacing: 1px;
         }
 
         .delete-btn {
@@ -106,7 +123,6 @@ if (!$result) {
             font-size: 1.2em;
         }
 
-        /* Search bar styling */
         .search-container {
             text-align: center;
             margin: 20px 0;
@@ -128,11 +144,53 @@ if (!$result) {
             box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
         }
 
-        /* Highlight styling */
         .highlight {
             background-color: #fff3cd;
             padding: 2px;
             border-radius: 3px;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--base-color);
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            color: var(--darker-shade);
+            background: rgba(85, 107, 47, 0.1);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 100px;
+            background-color: var(--darker-shade);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -50px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8em;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
         }
     </style>
 </head>
@@ -154,7 +212,7 @@ if (!$result) {
 
         <main>
             <div class="search-container">
-                <input type="text" id="searchBar" class="search-bar" placeholder="Search by ID or email..." onkeyup="searchAccounts()">
+                <input type="text" id="searchBar" class="search-bar" placeholder="Search by ID, email, or recovery code..." onkeyup="searchAccounts()">
             </div>
 
             <?php if (isset($success_message)): ?>
@@ -178,8 +236,20 @@ if (!$result) {
                                     </button>
                                 </form>
                             </div>
-                            <div class="account-email">
-                                <i class="fas fa-envelope"></i> <?php echo htmlspecialchars($row['email']); ?>
+                            <div class="account-details">
+                                <div class="account-email">
+                                    <i class="fas fa-envelope"></i> <?php echo htmlspecialchars($row['email']); ?>
+                                </div>
+                                <div class="account-code">
+                                    <i class="fas fa-key"></i> 
+                                    Recovery Code: <?php echo htmlspecialchars($row['code']); ?>
+                                    <div class="tooltip">
+                                        <button class="copy-btn" onclick="copyCode('<?php echo htmlspecialchars($row['code']); ?>')">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        <span class="tooltiptext">Copy code</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     <?php endwhile; ?>
@@ -199,34 +269,43 @@ if (!$result) {
         }
 
         function confirmDelete(event) {
-            if (confirm('Are you sure you want to delete this account? This action cannot be undone.')) {
-                showLoadingScreen();
-                return true;
+            if (!confirm('Are you sure you want to delete this account? This action cannot be undone.')) {
+                event.preventDefault();
+                return false;
             }
-            event.preventDefault();
-            return false;
+            showLoadingScreen();
+            return true;
+        }
+
+        function copyCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.currentTarget;
+                const icon = btn.querySelector('i');
+                const originalClass = icon.className;
+                
+                // Change to checkmark
+                icon.className = 'fas fa-check';
+                
+                // Revert back after 1.5 seconds
+                setTimeout(() => {
+                    icon.className = originalClass;
+                }, 1500);
+            });
         }
 
         function searchAccounts() {
             const searchText = document.getElementById('searchBar').value.toLowerCase();
-            const accountCards = document.querySelectorAll('.account-card');
+            const cards = document.getElementsByClassName('account-card');
             
-            accountCards.forEach(card => {
-                const cardText = card.textContent.toLowerCase();
-                const shouldShow = cardText.includes(searchText);
-                card.style.display = shouldShow ? '' : 'none';
+            Array.from(cards).forEach(card => {
+                const id = card.querySelector('.account-id').textContent.toLowerCase();
+                const email = card.querySelector('.account-email').textContent.toLowerCase();
+                const code = card.querySelector('.account-code').textContent.toLowerCase();
                 
-                if (shouldShow && searchText) {
-                    // Remove existing highlights
-                    card.innerHTML = card.innerHTML.replace(/<mark class="highlight">(.*?)<\/mark>/g, '$1');
-                    
-                    // Add new highlights
-                    const regex = new RegExp(searchText, 'gi');
-                    const elements = card.getElementsByClassName('account-id');
-                    elements[0].innerHTML = elements[0].textContent.replace(regex, match => `<mark class="highlight">${match}</mark>`);
-                    
-                    const emailElements = card.getElementsByClassName('account-email');
-                    emailElements[0].innerHTML = emailElements[0].innerHTML.replace(regex, match => `<mark class="highlight">${match}</mark>`);
+                if (id.includes(searchText) || email.includes(searchText) || code.includes(searchText)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
                 }
             });
         }
