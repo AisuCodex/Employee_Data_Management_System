@@ -124,8 +124,10 @@ if (!$result) {
         }
 
         .search-container {
-            text-align: center;
-            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         .search-bar {
@@ -192,6 +194,60 @@ if (!$result) {
             visibility: visible;
             opacity: 1;
         }
+
+        /* Print button styles */
+        .print-btn {
+            background-color: #556B2F;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .print-btn:hover {
+            background-color: #3d4d22;
+        }
+
+        /* Print-specific styles */
+        @media print {
+            .loading-overlay, .back-btn, .search-container, .print-btn, .delete-btn,
+            .copy-btn, .tooltip, .success-message, .error-message {
+                display: none !important;
+            }
+            body {
+                background-color: white;
+                padding: 20px;
+            }
+            .container {
+                padding: 0;
+                max-width: none;
+            }
+            header {
+                margin-bottom: 20px;
+            }
+            .account-card {
+                box-shadow: none;
+                border: 1px solid #000;
+                break-inside: avoid;
+                margin-bottom: 20px;
+            }
+            .account-header {
+                border-bottom: 1px solid #000;
+            }
+            .account-code {
+                background: none;
+                border: 1px solid #000;
+            }
+            .requests-container {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
@@ -213,6 +269,9 @@ if (!$result) {
         <main>
             <div class="search-container">
                 <input type="text" id="searchBar" class="search-bar" placeholder="Search by ID, email, or recovery code..." onkeyup="searchAccounts()">
+                <button type="button" onclick="window.print()" class="print-btn">
+                    <i class="fas fa-print"></i> Print Report
+                </button>
             </div>
 
             <?php if (isset($success_message)): ?>

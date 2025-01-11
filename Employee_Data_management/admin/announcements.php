@@ -208,6 +208,73 @@ $result = $conn->query("SELECT * FROM announcements ORDER BY date_posted DESC");
             border-radius: 3px;
             font-weight: bold;
         }
+
+        /* Print button styles */
+        .print-btn {
+            background-color: #556B2F;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .print-btn:hover {
+            background-color: #3d4d22;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Print-specific styles */
+        @media print {
+            .loading-overlay, .back-btn, .search-container, .print-btn, .delete-btn,
+            .announcement-form, .success-message, .error-message {
+                display: none !important;
+            }
+            body {
+                background-color: white;
+                padding: 20px;
+            }
+            .container {
+                padding: 0;
+                max-width: none;
+            }
+            header {
+                margin-bottom: 20px;
+            }
+            .announcement-card {
+                box-shadow: none;
+                border: 1px solid #000;
+                break-inside: avoid;
+                margin-bottom: 20px;
+                page-break-inside: avoid;
+            }
+            .announcement-header {
+                border-bottom: 1px solid #000;
+            }
+            .importance-badge {
+                border: 1px solid #000;
+                background: none !important;
+                color: black !important;
+            }
+            .announcement-content {
+                margin: 15px 0;
+            }
+            .announcement-meta {
+                border-top: 1px solid #000;
+                padding-top: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -235,7 +302,6 @@ $result = $conn->query("SELECT * FROM announcements ORDER BY date_posted DESC");
                 <div class="error-message"><?php echo $error_message; ?></div>
             <?php endif; ?>
 
-
             <div class="announcement-form">
                 <h2>Create New Announcement</h2>
                 <form method="POST" onsubmit="showLoadingScreen()">
@@ -261,6 +327,9 @@ $result = $conn->query("SELECT * FROM announcements ORDER BY date_posted DESC");
             </div>
             <div class="search-container">
                 <input type="text" id="searchBar" class="search-bar" placeholder="Search announcements..." onkeyup="searchAnnouncements()">
+                <button type="button" onclick="window.print()" class="print-btn">
+                    <i class="fas fa-print"></i> Print Announcements
+                </button>
             </div>
 
             <div class="requests-container">
