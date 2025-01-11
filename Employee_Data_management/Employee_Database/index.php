@@ -48,6 +48,43 @@ $result = $conn->query($sql);
             border-radius: 3px;
             font-weight: bold;
         }
+        
+        /* Print-specific styles */
+        @media print {
+            .back-btn-container, .create-btn-container, .actions, form, .print-btn {
+                display: none;
+            }
+            body {
+                padding: 20px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            th, td {
+                border: 1px solid #000;
+                padding: 8px;
+                text-align: left;
+            }
+            h1 {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+        }
+        .print-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .print-btn:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body id="top">
@@ -65,6 +102,7 @@ $result = $conn->query($sql);
     
     <div class="create-btn-container">
         <a class="create-btn" href="create.php">Add New Employee</a>
+        <button onclick="window.print()" class="print-btn">Print Report</button>
     </div>
 
     <table>
