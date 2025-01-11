@@ -99,13 +99,28 @@ if ($result === false) {
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 5px;
-            opacity: 1;
-            transition: opacity 0.3s ease;
         }
 
         .back-btn:hover {
             opacity: 0.8;
+        }
+
+        /* Print button styles */
+        .print-btn {
+            background-color: #556B2F;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: auto;
+        }
+
+        .print-btn:hover {
+            background-color: #3d4d22;
         }
 
         /* Table Styles */
@@ -331,6 +346,44 @@ if ($result === false) {
                 margin: 10% auto;
             }
         }
+
+        /* Print-specific styles */
+        @media print {
+            .back-btn, .print-btn, .loading-overlay, .modal, .action-buttons, .search-bar {
+                display: none !important;
+            }
+            body {
+                background-color: white;
+                padding: 20px;
+            }
+            .container {
+                padding: 0;
+                max-width: none;
+            }
+            header {
+                background-color: white;
+                color: black;
+                padding: 0;
+                margin-bottom: 20px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            th, td {
+                border: 1px solid #000;
+                padding: 8px;
+                text-align: left;
+            }
+            .status {
+                color: black !important;
+                background: none !important;
+                padding: 0 !important;
+            }
+            .status::before {
+                content: attr(data-status);
+            }
+        }
     </style>
 </head>
 <body>
@@ -346,6 +399,9 @@ if ($result === false) {
                     <i class="fas fa-arrow-left"></i> Back
                 </a>
                 <h1>Leave Requests Management</h1>
+                <button onclick="window.print()" class="print-btn">
+                    <i class="fas fa-print"></i> Print Report
+                </button>
             </div>
         </header>
 
@@ -403,7 +459,12 @@ if ($result === false) {
                                     <td><?php echo htmlspecialchars($row['start_date']); ?></td>
                                     <td><?php echo htmlspecialchars($row['end_date']); ?></td>
                                     <td><?php echo htmlspecialchars($row['reason']); ?></td>
-                                    <td><span class="status <?php echo $statusClass; ?>"><?php echo ucfirst($row['status']); ?></span></td>
+                                    <td>
+                                        <span class="status <?php echo $row['status']; ?>" 
+                                              data-status="<?php echo ucfirst($row['status']); ?>">
+                                            <?php echo ucfirst($row['status']); ?>
+                                        </span>
+                                    </td>
                                     <td class="actions">
                                         <?php if ($row['status'] === 'pending'): ?>
                                             <button onclick="approveRequest(<?php echo $row['id']; ?>)" class="approve-btn">

@@ -98,6 +98,73 @@ if (!$stmt) {
     <link rel="stylesheet" href="../CSS/employeeLogs.css">
     <link rel="stylesheet" type="text/css" href="../CSS/Loading_screen.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Print button styles */
+        .print-btn {
+            background-color: #556B2F;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .print-btn:hover {
+            background-color: #3d4d22;
+        }
+
+        /* Print-specific styles */
+        @media print {
+            .loading-overlay, .back-btn, .search-filter-container, .print-btn, .delete-btn,
+            .alert, form, .actions {
+                display: none !important;
+            }
+            body {
+                background-color: white;
+                padding: 20px;
+            }
+            .container {
+                padding: 0;
+                max-width: none;
+            }
+            .header {
+                margin-bottom: 20px;
+            }
+            .table-container {
+                box-shadow: none;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            th, td {
+                border: 1px solid #000;
+                padding: 8px;
+                text-align: left;
+            }
+            .status-badge {
+                background: none !important;
+                color: black !important;
+                padding: 0 !important;
+                border-radius: 0 !important;
+            }
+            .no-records {
+                text-align: center;
+            }
+        }
+
+        .search-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+    </style>
 </head>
 <body>
     <!-- Loading screen -->
@@ -129,6 +196,9 @@ if (!$stmt) {
                 </div>
                 <button type="submit" class="search-btn">Search</button>
                 <a href="employeeLogs.php" class="reset-btn">Reset</a>
+                <button type="button" onclick="window.print()" class="print-btn">
+                    <i class="fas fa-print"></i> Print Report
+                </button>
             </form>
         </div>
 

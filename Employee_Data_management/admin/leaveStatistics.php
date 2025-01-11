@@ -215,6 +215,58 @@ $leave_count_result = $conn->query($leave_count_sql);
             border-radius: 5px;
             cursor: pointer;
         }
+
+        /* Print button styles */
+        .print-btn {
+            background-color: #556B2F;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .print-btn:hover {
+            background-color: #3d4d22;
+        }
+
+        /* Print-specific styles */
+        @media print {
+            .back-btn, .print-btn, .loading-overlay, .modal, .delete-btn {
+                display: none !important;
+            }
+            body {
+                background-color: white;
+                padding: 20px;
+            }
+            .container {
+                padding: 0;
+                max-width: none;
+            }
+            .statistics-container {
+                box-shadow: none;
+                padding: 0;
+            }
+            .statistics-table table {
+                border: 1px solid #000;
+            }
+            .statistics-table th,
+            .statistics-table td {
+                border: 1px solid #000;
+                padding: 8px;
+            }
+            .summary-cards {
+                grid-template-columns: repeat(4, 1fr);
+                page-break-inside: avoid;
+            }
+            .summary-card {
+                break-inside: avoid;
+            }
+        }
     </style>
 </head>
 <body>
@@ -229,6 +281,9 @@ $leave_count_result = $conn->query($leave_count_sql);
                 <i class="fas fa-arrow-left"></i> Back
             </a>
             <h1>Employee Leave Statistics</h1>
+            <button onclick="window.print()" class="print-btn">
+                <i class="fas fa-print"></i> Print Report
+            </button>
         </div>
 
         <?php
