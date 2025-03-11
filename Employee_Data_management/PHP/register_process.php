@@ -10,6 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
     $confirmPassword = $_POST['confirm_password'];
+    $fullName = $_POST['full_name'];
     
     if ($password !== $confirmPassword) {
         $errorMessage = "Passwords do not match!";
@@ -28,9 +29,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
             $recovery_code = substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 6);
             
             // Email doesn't exist, proceed with registration
-            $insert_sql = "INSERT INTO employee_acc (email, password, code) VALUES (?, ?, ?)";
+            $insert_sql = "INSERT INTO employee_acc (full_name, email, password, code) VALUES (?, ?, ?, ?)";
             $insert_stmt = $conn->prepare($insert_sql);
-            $insert_stmt->bind_param("sss", $email, $password, $recovery_code);
+            $insert_stmt->bind_param("ssss", $fullName, $email, $password, $recovery_code);
             
             if ($insert_stmt->execute()) {
                 echo '
@@ -270,6 +271,11 @@ mysqli_close($conn);
         <!-- Registration form only displays if there is no success message -->
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" onsubmit="showLoadingScreen()">
             <h2>Register</h2>
+            <div class="inputBox">
+                <input type="text" id="full_name" name="full_name" required>
+                <span id="fullname-text">Full Name</span>
+                <i id="fullname-focus"></i>
+            </div>
             <div class="inputBox">
                 <input type="email" id="email" name="email" required>
                 <span id="email-text">Email</span>

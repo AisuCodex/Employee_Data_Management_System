@@ -19,7 +19,7 @@ if (isset($_POST['delete_account'])) {
 }
 
 // Fetch all employee_acc accounts including the recovery code
-$query = "SELECT id, email, code FROM employee_acc";
+$query = "SELECT id, full_name, email, code FROM employee_acc";
 $result = $conn->query($query);
 
 if (!$result) {
@@ -78,12 +78,51 @@ if (!$result) {
             gap: 10px;
         }
 
+        .account-name {
+            color: var(--base-color);
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .account-name em {
+            color: #999;
+            font-style: italic;
+            font-weight: normal;
+        }
+
         .account-code {
             background: rgba(85, 107, 47, 0.1);
             padding: 8px 12px;
             border-radius: 6px;
             font-family: monospace;
             letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .code-placeholder {
+            font-family: monospace;
+            letter-spacing: 2px;
+            color: #777;
+        }
+
+        .show-code-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--base-color);
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .show-code-btn:hover {
+            color: var(--darker-shade);
+            background: rgba(85, 107, 47, 0.1);
         }
 
         .delete-btn {
@@ -296,13 +335,24 @@ if (!$result) {
                                 </form>
                             </div>
                             <div class="account-details">
+                                <div class="account-name">
+                                    <i class="fas fa-user"></i> <?php echo !empty($row['full_name']) ? htmlspecialchars($row['full_name']) : '<em>No name provided</em>'; ?>
+                                </div>
                                 <div class="account-email">
                                     <i class="fas fa-envelope"></i> <?php echo htmlspecialchars($row['email']); ?>
                                 </div>
                                 <div class="account-code">
                                     <i class="fas fa-key"></i> 
-                                    Recovery Code: <?php echo htmlspecialchars($row['code']); ?>
+                                    Recovery Code: 
+                                    <span class="code-value" style="display: none;"><?php echo htmlspecialchars($row['code']); ?></span>
+                                    <span class="code-placeholder">●●●●●●●●●●</span>
                                     <div class="tooltip">
+                                        <button class="show-code-btn" onclick="toggleCodeVisibility(this, '<?php echo htmlspecialchars($row['code']); ?>')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <span class="tooltiptext">Show/Hide code</span>
+                                    </div>
+                                    <div class="tooltip" style="display: none;" id="copy-btn-container-<?php echo $row['id']; ?>">
                                         <button class="copy-btn" onclick="copyCode('<?php echo htmlspecialchars($row['code']); ?>')">
                                             <i class="fas fa-copy"></i>
                                         </button>
@@ -350,6 +400,30 @@ if (!$result) {
                     icon.className = originalClass;
                 }, 1500);
             });
+        }
+
+        function toggleCodeVisibility(button, code) {
+            const codeContainer = button.closest('.account-code');
+            const codeValue = codeContainer.querySelector('.code-value');
+            const codePlaceholder = codeContainer.querySelector('.code-placeholder');
+            const copyBtnContainer = codeContainer.querySelector('[id^="copy-btn-container-"]');
+            const icon = button.querySelector('i');
+            
+            if (codeValue.style.display === 'none') {
+                // Show the code
+                codeValue.style.display = 'inline';
+                codePlaceholder.style.display = 'none';
+                copyBtnContainer.style.display = 'inline-block';
+                icon.className = 'fas fa-eye-slash';
+                button.querySelector('.tooltiptext').textContent = 'Hide code';
+            } else {
+                // Hide the code
+                codeValue.style.display = 'none';
+                codePlaceholder.style.display = 'inline';
+                copyBtnContainer.style.display = 'none';
+                icon.className = 'fas fa-eye';
+                button.querySelector('.tooltiptext').textContent = 'Show code';
+            }
         }
 
         function searchAccounts() {
